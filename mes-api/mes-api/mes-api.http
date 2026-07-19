@@ -1,0 +1,6 @@
+@mes_api_HostAddress = http://localhost:5223
+
+GET {{mes_api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
