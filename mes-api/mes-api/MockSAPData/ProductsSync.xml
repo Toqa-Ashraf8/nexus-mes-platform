@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- المنتج الأول: غسالة موديل A -->
+<ProductDefinitions>
+<ProductDefinition>
+	<ID>WASH-MOD-A</ID>
+	<Description>Standard Washing Machine Model A</Description>
+	<Version>1.0</Version>
+
+	<!-- خطوات الإنتاج (Routing) -->
+	<ProductSegment>
+		<ID>SEG-10</ID>
+		<Description>Drum Assembly</Description>
+		<!-- متطلبات المواد (BOM) لهذه الخطوة بالتحديد -->
+		<MaterialRequirement>
+			<MaterialDefinitionID>DRUM-SS-01</MaterialDefinitionID>
+			<Quantity>1</Quantity>
+			<UnitOfMeasure>pcs</UnitOfMeasure>
+		</MaterialRequirement>
+		<MaterialRequirement>
+			<MaterialDefinitionID>SCREW-HEX-10</MaterialDefinitionID>
+			<Quantity>12</Quantity>
+			<UnitOfMeasure>pcs</UnitOfMeasure>
+		</MaterialRequirement>
+		<!-- الفئة المطلوبة من العمال لهذه الخطوة -->
+		<PersonnelRequirement>
+			<PersonnelClassID>Junior_Assembler</PersonnelClassID>
+		</PersonnelRequirement>
+	</ProductSegment>
+
+	<ProductSegment>
+		<ID>SEG-20</ID>
+		<Description>Electronics Setup</Description>
+		<MaterialRequirement>
+			<MaterialDefinitionID>PCB-MAIN-A</MaterialDefinitionID>
+			<Quantity>1</Quantity>
+		</MaterialRequirement>
+		<!-- بارامترات الـ PLC (الوصقة) لهذه الخطوة -->
+		<Parameter>
+			<ID>TEST_VOLTAGE</ID>
+			<Value>220</Value>
+			<UnitOfMeasure>V</UnitOfMeasure>
+		</Parameter>
+	</ProductSegment>
+</ProductDefinition>
+
+<!-- المنتج الثاني: غسالة سمارت X1 -->
+<ProductDefinition>
+	<ID>WASH-SMART-X1</ID>
+	<Description>Smart Connect Washing Machine</Description>
+	<Version>2.1</Version>
+
+	<ProductSegment>
+		<ID>SEG-10</ID>
+		<Description>High-Precision Casting</Description>
+		<MaterialRequirement>
+			<MaterialDefinitionID>STEEL-PLATE-PRO</MaterialDefinitionID>
+			<Quantity>1</Quantity>
+		</MaterialRequirement>
+		<PersonnelRequirement>
+			<PersonnelClassID>CNC_Operator</PersonnelClassID>
+		</PersonnelRequirement>
+		<Parameter>
+			<ID>HYDRAULIC_PRESS</ID>
+			<Value>5.5</Value>
+			<UnitOfMeasure>bar</UnitOfMeasure>
+		</Parameter>
+	</ProductSegment>
+
+	<ProductSegment>
+		<ID>SEG-20</ID>
+		<Description>Wi-Fi Module Integration</Description>
+		<MaterialRequirement>
+			<MaterialDefinitionID>WIFI-MOD-5G</MaterialDefinitionID>
+			<Quantity>1</Quantity>
+		</MaterialRequirement>
+		<PersonnelRequirement>
+			<PersonnelClassID>Electronics_Technician</PersonnelClassID>
+		</PersonnelRequirement>
+	</ProductSegment>
+</ProductDefinition>
+
+</ProductDefinitions>
