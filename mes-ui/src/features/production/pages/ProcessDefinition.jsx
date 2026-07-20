@@ -14,8 +14,14 @@ import {
   FiSend
 } from 'react-icons/fi';
 import './ProcessDefinition.css';
+import { useDispatch, useSelector } from 'react-redux';
+import SapProductsModal from '../components/SapProductsModal/SapProductsModal';
+import { toggleProductsModal } from '../slices/processDefinitionSlice';
 
 const ProcessDefinition = () => {
+ const {isProductsModalOpen}=useSelector((state)=>state.processDefinition);
+ const dispatch=useDispatch();
+
   const [product, setProduct] = useState({
     sku: '',
     version: '',
@@ -90,6 +96,7 @@ const ProcessDefinition = () => {
 
   return (
     <div className="mes-container">
+      {isProductsModalOpen && <SapProductsModal/>}
       <header className="mes-navbar">
         <div className="mes-logo-zone">
           <div className="mes-badge">LEVEL 3</div>
@@ -100,7 +107,7 @@ const ProcessDefinition = () => {
         </div>
         
         <div className="mes-nav-actions">
-          <button className="mes-btn-outline" onClick={handleFetchFromSAP}>
+          <button className="mes-btn-outline" onClick={()=>dispatch(toggleProductsModal(true))}>
             <FiRefreshCw /> Fetch from SAP
           </button>
           <button className="mes-btn-outline" onClick={handleCloneRoute}>
