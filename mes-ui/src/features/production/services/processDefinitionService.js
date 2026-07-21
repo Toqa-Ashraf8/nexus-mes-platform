@@ -6,3 +6,8 @@ export const fetchSapProducts=createAsyncThunk("fetchSapProducts/processDefiniti
     .then((res)=>res.data);
     return resp;
 })
+export const releaseProduct=createAsyncThunk("ReleaseProduct/processDefinition",async(product)=>{
+    const resp=await axiosInstanse.post("ProcessDefinition/ReleaseDefinition",product)
+    .then((res)=>res.data);
+    return resp;
+})

@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import './SapProductsModal.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleProductsModal } from '../../slices/processDefinitionSlice';
+import { fillFormWithSAPValues, toggleProductsModal } from '../../slices/processDefinitionSlice';
 import { fetchSapProducts } from '../../services/processDefinitionService';
 
 const SapProductsModal = () => {
   const {products}=useSelector((state)=>state.processDefinition);
   const dispatch=useDispatch();
-console.log("products",products);
+
 
 useEffect(()=>{
     dispatch(fetchSapProducts());
 },[dispatch])
+console.log("products",products)
   return (
     <div className="sap-modal-overlay" >
       <div className="sap-modal-container" onClick={(e) => e.stopPropagation()}>
@@ -33,7 +34,7 @@ useEffect(()=>{
               <table className="sap-modal-table">
                 <thead>
                   <tr>
-                    <th>Product ID</th>
+                    <th>Product SKU</th>
                     <th>Description</th>
                     <th>Version</th>
                     <th>Segments Count</th>
@@ -42,8 +43,8 @@ useEffect(()=>{
               <tbody>
             {products && products.length > 0 ? (
                 products.map((product, index) => (
-                <tr key={product.ID|| index}>
-                    <td className="sap-prod-id">{product.ID}</td>
+                <tr key={index} style={{cursor:'pointer'}} onClick={()=>dispatch(fillFormWithSAPValues(index))}>
+                    <td className="sap-prod-id">{product.SKU}</td>
                     <td>{product.Description}</td>
                     <td>
                     <span className="sap-badge-version">
@@ -69,7 +70,7 @@ useEffect(()=>{
             </div>
         </div>
         <div className="sap-modal-footer">
-          <span className="sap-total-count">Total Items: 0</span>
+          <span className="sap-total-count">Total Items: {products ? products.length : 0}</span>
           <button className="sap-btn-close"  
           onClick={()=>dispatch(toggleProductsModal(false))}>
           Close

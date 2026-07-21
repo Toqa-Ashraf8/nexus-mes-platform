@@ -1,0 +1,22 @@
+.Toastify__toast-container--bottom-right {
+  width: auto !important;
+  max-width: 80vw !important; 
+}
+
+.mes-custom-toast {
+  width: max-content !important; 
+  max-width: 700px !important;    
+  min-width: 320px;
+  white-space: nowrap;            
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15) !important;
+}
+
+@media (max-width: 768px) {
+  .mes-custom-toast {
+    white-space: normal !important;
+    width: auto !important;
+  }
+}
