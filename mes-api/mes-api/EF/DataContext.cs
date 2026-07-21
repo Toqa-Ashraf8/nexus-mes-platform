@@ -16,14 +16,14 @@ public class DataContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<ProcessSegment>()
-            .HasOne(s => s.ProductMaster)
-            .WithMany(p => p.Segments)
+            .HasOne(s => s.ProductMasters)
+            .WithMany(p => p.ProductSegments)
             .HasForeignKey(s => s.ProductMasterId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<SegmentBomItem>()
             .HasOne(b => b.ProcessSegment)
-            .WithMany(s => s.BomItems)
+            .WithMany(s => s.MaterialRequirements)
             .HasForeignKey(b => b.ProcessSegmentId)
             .OnDelete(DeleteBehavior.Cascade);
 

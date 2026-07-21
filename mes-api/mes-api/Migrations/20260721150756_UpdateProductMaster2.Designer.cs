@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace mes_api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260720143555_setinitialMigration")]
-    partial class setinitialMigration
+    [Migration("20260721150756_UpdateProductMaster2")]
+    partial class UpdateProductMaster2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,66 +24,91 @@ namespace mes_api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("EquipmentRequirement", b =>
+                {
+                    b.Property<string>("EquipmentClassID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("ProcessSegmentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EquipmentClassID");
+
+                    b.HasIndex("ProcessSegmentId");
+
+                    b.ToTable("EquipmentRequirement");
+                });
+
             modelBuilder.Entity("PLCParameter", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("PlcParameterId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlcParameterId"));
 
-                    b.Property<string>("Name")
+                    b.Property<int?>("ProcessSegmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tag")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("ProcessSegmentId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Target")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("Tolerance")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Unit")
+                    b.Property<string>("UnitOfMeasure")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("Id");
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("PlcParameterId");
 
                     b.HasIndex("ProcessSegmentId");
 
                     b.ToTable("PLCParameters");
                 });
 
+            modelBuilder.Entity("PersonnelRequirement", b =>
+                {
+                    b.Property<string>("PersonnelClassID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("ProcessSegmentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PersonnelClassID");
+
+                    b.HasIndex("ProcessSegmentId");
+
+                    b.ToTable("PersonnelRequirement");
+                });
+
             modelBuilder.Entity("ProcessSegment", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ProcessSegmentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("EquipmentClass")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProcessSegmentId"));
 
                     b.Property<string>("Instructions")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("ProductMasterId")
+                    b.Property<int?>("ProductMasterId")
                         .HasColumnType("int");
+
+                    b.Property<string>("SequenceName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SequenceNo")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("ProcessSegmentId");
 
                     b.HasIndex("ProductMasterId");
 
@@ -92,14 +117,18 @@ namespace mes_api.Migrations
 
             modelBuilder.Entity("ProductMaster", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ProductMasterId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductMasterId"));
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DefinitionStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -114,7 +143,7 @@ namespace mes_api.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ProductMasterId");
 
                     b.ToTable("ProductMasters");
                 });
@@ -127,18 +156,18 @@ namespace mes_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("MaterialId")
+                    b.Property<string>("MaterialDefinitionID")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("ProcessSegmentId")
+                    b.Property<int?>("ProcessSegmentId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<string>("Uom")
+                    b.Property<string>("UnitOfMeasure")
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
@@ -150,49 +179,64 @@ namespace mes_api.Migrations
                     b.ToTable("SegmentBomItems");
                 });
 
+            modelBuilder.Entity("EquipmentRequirement", b =>
+                {
+                    b.HasOne("ProcessSegment", null)
+                        .WithMany("EquipmentRequirements")
+                        .HasForeignKey("ProcessSegmentId");
+                });
+
             modelBuilder.Entity("PLCParameter", b =>
                 {
                     b.HasOne("ProcessSegment", "ProcessSegment")
                         .WithMany("Parameters")
                         .HasForeignKey("ProcessSegmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("ProcessSegment");
                 });
 
+            modelBuilder.Entity("PersonnelRequirement", b =>
+                {
+                    b.HasOne("ProcessSegment", null)
+                        .WithMany("PersonnelRequirements")
+                        .HasForeignKey("ProcessSegmentId");
+                });
+
             modelBuilder.Entity("ProcessSegment", b =>
                 {
-                    b.HasOne("ProductMaster", "ProductMaster")
-                        .WithMany("Segments")
+                    b.HasOne("ProductMaster", "ProductMasters")
+                        .WithMany("ProductSegments")
                         .HasForeignKey("ProductMasterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.Navigation("ProductMaster");
+                    b.Navigation("ProductMasters");
                 });
 
             modelBuilder.Entity("SegmentBomItem", b =>
                 {
                     b.HasOne("ProcessSegment", "ProcessSegment")
-                        .WithMany("BomItems")
+                        .WithMany("MaterialRequirements")
                         .HasForeignKey("ProcessSegmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("ProcessSegment");
                 });
 
             modelBuilder.Entity("ProcessSegment", b =>
                 {
-                    b.Navigation("BomItems");
+                    b.Navigation("EquipmentRequirements");
+
+                    b.Navigation("MaterialRequirements");
 
                     b.Navigation("Parameters");
+
+                    b.Navigation("PersonnelRequirements");
                 });
 
             modelBuilder.Entity("ProductMaster", b =>
                 {
-                    b.Navigation("Segments");
+                    b.Navigation("ProductSegments");
                 });
 #pragma warning restore 612, 618
         }

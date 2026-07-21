@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace mes_api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260721144905_UpdateProductMaster")]
+    partial class UpdateProductMaster
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +47,7 @@ namespace mes_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PlcParameterId"));
 
-                    b.Property<int?>("ProcessSegmentId")
+                    b.Property<int>("ProcessSegmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Tag")
@@ -95,18 +98,11 @@ namespace mes_api.Migrations
                     b.Property<string>("Instructions")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProductMasterId")
+                    b.Property<int>("ProductMasterId")
                         .HasColumnType("int");
-
-                    b.Property<string>("SequenceName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SequenceNo")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("standardTimeMin")
-                        .HasColumnType("decimal(18,1)");
 
                     b.HasKey("ProcessSegmentId");
 
@@ -161,7 +157,7 @@ namespace mes_api.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("ProcessSegmentId")
+                    b.Property<int>("ProcessSegmentId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Quantity")
@@ -191,7 +187,8 @@ namespace mes_api.Migrations
                     b.HasOne("ProcessSegment", "ProcessSegment")
                         .WithMany("Parameters")
                         .HasForeignKey("ProcessSegmentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ProcessSegment");
                 });
@@ -208,7 +205,8 @@ namespace mes_api.Migrations
                     b.HasOne("ProductMaster", "ProductMasters")
                         .WithMany("ProductSegments")
                         .HasForeignKey("ProductMasterId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ProductMasters");
                 });
@@ -218,7 +216,8 @@ namespace mes_api.Migrations
                     b.HasOne("ProcessSegment", "ProcessSegment")
                         .WithMany("MaterialRequirements")
                         .HasForeignKey("ProcessSegmentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ProcessSegment");
                 });

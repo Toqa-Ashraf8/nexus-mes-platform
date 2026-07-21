@@ -31,15 +31,21 @@ namespace MesApp.Services
             var products = xDoc.Descendants("ProductDefinition")
                 .Select(p => new ProductDefinitionDto
                 {
-                    ID = p.Element("ID")?.Value ?? string.Empty,
+                    SKU = p.Element("SKU")?.Value ?? string.Empty,
                     Description = p.Element("Description")?.Value ?? string.Empty,
                     Version = p.Element("Version")?.Value ?? "1.0",
-
+                    DefinitionStatus="New",
                     ProductSegments = p.Elements("ProductSegment")
                         .Select(s => new ProductSegmentDto
                         {
-                            ID = s.Element("ID")?.Value ?? string.Empty,
-                            Description = s.Element("Description")?.Value ?? string.Empty,
+                            SequenceNo = int.TryParse(s.Element("SequenceNo")?.Value, out var seq) ? seq : 0,
+                            SequenceName = s.Element("SequenceName")?.Value ?? string.Empty,
+
+                            EquipmentRequirements=s.Elements("EquipmentRequirement")
+                            .Select(m => new EquipmentRequirementDto
+                            {
+                                EquipmentClassID = m.Element("EquipmentClassID")?.Value ?? string.Empty,
+                            }).ToList(),
 
                             MaterialRequirements = s.Elements("MaterialRequirement")
                                 .Select(m => new MaterialRequirementDto
@@ -58,7 +64,7 @@ namespace MesApp.Services
                             Parameters = s.Elements("Parameter")
                                 .Select(pa => new ParameterDto
                                 {
-                                    ID = pa.Element("ID")?.Value ?? string.Empty,
+                                    Tag = pa.Element("Tag")?.Value ?? string.Empty,
                                     Value = pa.Element("Value")?.Value ?? string.Empty,
                                     UnitOfMeasure = pa.Element("UnitOfMeasure")?.Value ?? string.Empty
                                 }).ToList()

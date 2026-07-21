@@ -38,9 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\IRepository\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 	<ItemGroup>
 		<None Update="MockSAPData\ProductsSync.xml">

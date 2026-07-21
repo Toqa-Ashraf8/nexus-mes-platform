@@ -23,6 +23,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("ConnM")));
 
 
 builder.Services.AddScoped<ISapSyncService, SapSyncService>();
+builder.Services.AddScoped<IProcessDefinitionRepository, ProcessDefinitionRepository>();
 builder.Services.AddHostedService<SapOrderWatcherService>();
 
 var app = builder.Build();

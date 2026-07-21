@@ -15,61 +15,93 @@ namespace mes_api.Migrations
                 name: "ProductMasters",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    ProductMasterId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SKU = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Version = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductMasters", x => x.Id);
+                    table.PrimaryKey("PK_ProductMasters", x => x.ProductMasterId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ProcessSegments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    ProcessSegmentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SequenceNo = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    EquipmentClass = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Instructions = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProductMasterId = table.Column<int>(type: "int", nullable: false)
+                    ProductMasterId = table.Column<int>(type: "int", nullable: false),
+                    Instructions = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProcessSegments", x => x.Id);
+                    table.PrimaryKey("PK_ProcessSegments", x => x.ProcessSegmentId);
                     table.ForeignKey(
                         name: "FK_ProcessSegments_ProductMasters_ProductMasterId",
                         column: x => x.ProductMasterId,
                         principalTable: "ProductMasters",
-                        principalColumn: "Id",
+                        principalColumn: "ProductMasterId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EquipmentRequirement",
+                columns: table => new
+                {
+                    EquipmentClassID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProcessSegmentId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EquipmentRequirement", x => x.EquipmentClassID);
+                    table.ForeignKey(
+                        name: "FK_EquipmentRequirement_ProcessSegments_ProcessSegmentId",
+                        column: x => x.ProcessSegmentId,
+                        principalTable: "ProcessSegments",
+                        principalColumn: "ProcessSegmentId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PersonnelRequirement",
+                columns: table => new
+                {
+                    PersonnelClassID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProcessSegmentId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PersonnelRequirement", x => x.PersonnelClassID);
+                    table.ForeignKey(
+                        name: "FK_PersonnelRequirement_ProcessSegments_ProcessSegmentId",
+                        column: x => x.ProcessSegmentId,
+                        principalTable: "ProcessSegments",
+                        principalColumn: "ProcessSegmentId");
                 });
 
             migrationBuilder.CreateTable(
                 name: "PLCParameters",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    PlcParameterId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Target = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Tag = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Tolerance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Unit = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    UnitOfMeasure = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     ProcessSegmentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PLCParameters", x => x.Id);
+                    table.PrimaryKey("PK_PLCParameters", x => x.PlcParameterId);
                     table.ForeignKey(
                         name: "FK_PLCParameters_ProcessSegments_ProcessSegmentId",
                         column: x => x.ProcessSegmentId,
                         principalTable: "ProcessSegments",
-                        principalColumn: "Id",
+                        principalColumn: "ProcessSegmentId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -79,9 +111,9 @@ namespace mes_api.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    MaterialId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    MaterialDefinitionID = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Quantity = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    Uom = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    UnitOfMeasure = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     ProcessSegmentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -91,9 +123,19 @@ namespace mes_api.Migrations
                         name: "FK_SegmentBomItems_ProcessSegments_ProcessSegmentId",
                         column: x => x.ProcessSegmentId,
                         principalTable: "ProcessSegments",
-                        principalColumn: "Id",
+                        principalColumn: "ProcessSegmentId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EquipmentRequirement_ProcessSegmentId",
+                table: "EquipmentRequirement",
+                column: "ProcessSegmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PersonnelRequirement_ProcessSegmentId",
+                table: "PersonnelRequirement",
+                column: "ProcessSegmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PLCParameters_ProcessSegmentId",
@@ -114,6 +156,12 @@ namespace mes_api.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "EquipmentRequirement");
+
+            migrationBuilder.DropTable(
+                name: "PersonnelRequirement");
+
             migrationBuilder.DropTable(
                 name: "PLCParameters");
 

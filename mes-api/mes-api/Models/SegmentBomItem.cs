@@ -1,25 +1,26 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
- public class SegmentBomItem
+using System.Text.Json.Serialization;
+public class SegmentBomItem
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [JsonIgnore]
         public int Id { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string MaterialId { get; set; } 
+        public string MaterialDefinitionID { get; set; } 
 
         [Required]
         [Column(TypeName = "decimal(18,4)")]
         public decimal Quantity { get; set; } 
 
         [StringLength(10)]
-        public string Uom { get; set; } = "pcs"; 
-
-        [Required]
-        public int ProcessSegmentId { get; set; }
-
+        public string UnitOfMeasure { get; set; } = "pcs";
+        [JsonIgnore]
+        public int? ProcessSegmentId { get; set; }
+        [JsonIgnore]
         [ForeignKey("ProcessSegmentId")]
-        public ProcessSegment ProcessSegment { get; set; } = null!;
+        public ProcessSegment? ProcessSegment { get; set; } = null!;
     }

@@ -6,6 +6,7 @@ obj/
 */obj/
 *.user
 *.suo
+*.env
 
 # React / Node modules
 node_modules/
@@ -17,3 +18,4 @@ build/
 # OS generated files
 .DS_Store
 Thumbs.db
+

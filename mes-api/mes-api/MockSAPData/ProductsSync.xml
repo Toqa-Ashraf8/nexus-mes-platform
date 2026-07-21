@@ -1,82 +1,220 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<!-- المنتج الأول: غسالة موديل A -->
 <ProductDefinitions>
-<ProductDefinition>
-	<ID>WASH-MOD-A</ID>
-	<Description>Standard Washing Machine Model A</Description>
-	<Version>1.0</Version>
 
-	<!-- خطوات الإنتاج (Routing) -->
-	<ProductSegment>
-		<ID>SEG-10</ID>
-		<Description>Drum Assembly</Description>
-		<!-- متطلبات المواد (BOM) لهذه الخطوة بالتحديد -->
-		<MaterialRequirement>
-			<MaterialDefinitionID>DRUM-SS-01</MaterialDefinitionID>
-			<Quantity>1</Quantity>
-			<UnitOfMeasure>pcs</UnitOfMeasure>
-		</MaterialRequirement>
-		<MaterialRequirement>
-			<MaterialDefinitionID>SCREW-HEX-10</MaterialDefinitionID>
-			<Quantity>12</Quantity>
-			<UnitOfMeasure>pcs</UnitOfMeasure>
-		</MaterialRequirement>
-		<!-- الفئة المطلوبة من العمال لهذه الخطوة -->
-		<PersonnelRequirement>
-			<PersonnelClassID>Junior_Assembler</PersonnelClassID>
-		</PersonnelRequirement>
-	</ProductSegment>
+	<!-- 1. غسالة موديل A - القياسية -->
+	<ProductDefinition>
+		<SKU>WASH-MOD-A</SKU>
+		<Description>Standard Washing Machine Model A</Description>
+		<Version>1.0</Version>
+		<ProductSegment>
+			<SequenceNo>10</SequenceNo>
+			<SequenceName>Drum Assembly</SequenceName>
+			<EquipmentRequirement>
+				<EquipmentClassID>Manual-Assembly-Line</EquipmentClassID>
+			</EquipmentRequirement>
+			<MaterialRequirement>
+				<MaterialDefinitionID>DRUM-SS-01</MaterialDefinitionID>
+				<Quantity>1</Quantity>
+			</MaterialRequirement>
+			<PersonnelRequirement>
+				<PersonnelClassID>Junior_Assembler</PersonnelClassID>
+			</PersonnelRequirement>
+		</ProductSegment>
+	</ProductDefinition>
 
-	<ProductSegment>
-		<ID>SEG-20</ID>
-		<Description>Electronics Setup</Description>
-		<MaterialRequirement>
-			<MaterialDefinitionID>PCB-MAIN-A</MaterialDefinitionID>
-			<Quantity>1</Quantity>
-		</MaterialRequirement>
-		<!-- بارامترات الـ PLC (الوصقة) لهذه الخطوة -->
-		<Parameter>
-			<ID>TEST_VOLTAGE</ID>
-			<Value>220</Value>
-			<UnitOfMeasure>V</UnitOfMeasure>
-		</Parameter>
-	</ProductSegment>
-</ProductDefinition>
+	<!-- 2. غسالة سمارت X1 - ذكية -->
+	<ProductDefinition>
+		<SKU>WASH-SMART-X1</SKU>
+		<Description>Smart Connect Washing Machine</Description>
+		<Version>2.1</Version>
+		<ProductSegment>
+			<SequenceNo>10</SequenceNo>
+			<SequenceName>High-Precision Casting</SequenceName>
+			<EquipmentRequirement>
+				<EquipmentClassID>Stamping-Press-01</EquipmentClassID>
+			</EquipmentRequirement>
+			<PersonnelRequirement>
+				<PersonnelClassID>CNC_Operator</PersonnelClassID>
+			</PersonnelRequirement>
+			<Parameter>
+				<Tag>HYDRAULIC_PRESS</Tag>
+				<Value>5.5</Value>
+				<UnitOfMeasure>bar</UnitOfMeasure>
+			</Parameter>
+		</ProductSegment>
+	</ProductDefinition>
 
-<!-- المنتج الثاني: غسالة سمارت X1 -->
-<ProductDefinition>
-	<ID>WASH-SMART-X1</ID>
-	<Description>Smart Connect Washing Machine</Description>
-	<Version>2.1</Version>
+	<!-- 3. غسالة اقتصادية B1 -->
+	<ProductDefinition>
+		<SKU>WASH-ECO-B1</SKU>
+		<Description>Economy Eco-Friendly Washer</Description>
+		<Version>1.2</Version>
+		<ProductSegment>
+			<SequenceNo>10</SequenceNo>
+			<SequenceName>Basic Frame Welding</SequenceName>
+			<EquipmentRequirement>
+				<EquipmentClassID>Welding-Robot-Station</EquipmentClassID>
+			</EquipmentRequirement>
+			<MaterialRequirement>
+				<MaterialDefinitionID>STEEL-SHEET-ECO</MaterialDefinitionID>
+				<Quantity>1</Quantity>
+			</MaterialRequirement>
+			<PersonnelRequirement>
+				<PersonnelClassID>Welder_Class_B</PersonnelClassID>
+			</PersonnelRequirement>
+		</ProductSegment>
+	</ProductDefinition>
 
-	<ProductSegment>
-		<ID>SEG-10</ID>
-		<Description>High-Precision Casting</Description>
-		<MaterialRequirement>
-			<MaterialDefinitionID>STEEL-PLATE-PRO</MaterialDefinitionID>
-			<Quantity>1</Quantity>
-		</MaterialRequirement>
-		<PersonnelRequirement>
-			<PersonnelClassID>CNC_Operator</PersonnelClassID>
-		</PersonnelRequirement>
-		<Parameter>
-			<ID>HYDRAULIC_PRESS</ID>
-			<Value>5.5</Value>
-			<UnitOfMeasure>bar</UnitOfMeasure>
-		</Parameter>
-	</ProductSegment>
+	<!-- 4. مجفف ملابس D1 -->
+	<ProductDefinition>
+		<SKU>DRY-STD-D1</SKU>
+		<Description>Standard Electric Clothes Dryer</Description>
+		<Version>1.0</Version>
+		<ProductSegment>
+			<SequenceNo>10</SequenceNo>
+			<SequenceName>Heating Element Install</SequenceName>
+			<EquipmentRequirement>
+				<EquipmentClassID>Manual-Assembly-Line</EquipmentClassID>
+			</EquipmentRequirement>
+			<MaterialRequirement>
+				<MaterialDefinitionID>HEAT-COIL-200W</MaterialDefinitionID>
+				<Quantity>1</Quantity>
+			</MaterialRequirement>
+			<Parameter>
+				<Tag>MAX_TEMP_TEST</Tag>
+				<Value>85</Value>
+				<UnitOfMeasure>C</UnitOfMeasure>
+			</Parameter>
+		</ProductSegment>
+	</ProductDefinition>
 
-	<ProductSegment>
-		<ID>SEG-20</ID>
-		<Description>Wi-Fi Module Integration</Description>
-		<MaterialRequirement>
-			<MaterialDefinitionID>WIFI-MOD-5G</MaterialDefinitionID>
-			<Quantity>1</Quantity>
-		</MaterialRequirement>
-		<PersonnelRequirement>
-			<PersonnelClassID>Electronics_Technician</PersonnelClassID>
-		</PersonnelRequirement>
-	</ProductSegment>
-</ProductDefinition>
+	<!-- 5. غسالة صناعية MAX -->
+	<ProductDefinition>
+		<SKU>WASH-IND-MAX</SKU>
+		<Description>Industrial High-Capacity Washer</Description>
+		<Version>3.0</Version>
+		<ProductSegment>
+			<SequenceNo>10</SequenceNo>
+			<SequenceName>Heavy Duty Chassis Fabrication</SequenceName>
+			<EquipmentRequirement>
+				<EquipmentClassID>Heavy-Duty-Line</EquipmentClassID>
+			</EquipmentRequirement>
+			<PersonnelRequirement>
+				<PersonnelClassID>Senior_Fabricator</PersonnelClassID>
+			</PersonnelRequirement>
+			<Parameter>
+				<Tag>WELD_STRENGTH_REQ</Tag>
+				<Value>500</Value>
+				<UnitOfMeasure>MPa</UnitOfMeasure>
+			</Parameter>
+		</ProductSegment>
+	</ProductDefinition>
+
+	<!-- 6. غسالة فئة الرفاهية Silver -->
+	<ProductDefinition>
+		<SKU>WASH-LUX-SILVER</SKU>
+		<Description>Luxury Series Silver Edition</Description>
+		<Version>1.5</Version>
+		<ProductSegment>
+			<SequenceNo>30</SequenceNo>
+			<SequenceName>Exterior Polishing</SequenceName>
+			<EquipmentRequirement>
+				<EquipmentClassID>Finishing-Station</EquipmentClassID>
+			</EquipmentRequirement>
+			<MaterialRequirement>
+				<MaterialDefinitionID>SILVER-COAT-FINISH</MaterialDefinitionID>
+				<Quantity>2.5</Quantity>
+			</MaterialRequirement>
+			<PersonnelRequirement>
+				<PersonnelClassID>Finishing_Expert</PersonnelClassID>
+			</PersonnelRequirement>
+		</ProductSegment>
+	</ProductDefinition>
+
+	<!-- 7. مجفف ذكي AI S1 -->
+	<ProductDefinition>
+		<SKU>DRY-SMART-S1</SKU>
+		<Description>AI-Powered Smart Dryer</Description>
+		<Version>2.0</Version>
+		<ProductSegment>
+			<SequenceNo>10</SequenceNo>
+			<SequenceName>Sensor Array Calibration</SequenceName>
+			<EquipmentRequirement>
+				<EquipmentClassID>Testing-Station-Electronic</EquipmentClassID>
+			</EquipmentRequirement>
+			<MaterialRequirement>
+				<MaterialDefinitionID>MOISTURE-SENSOR-AI</MaterialDefinitionID>
+				<Quantity>4</Quantity>
+			</MaterialRequirement>
+			<PersonnelRequirement>
+				<PersonnelClassID>Electronics_Expert</PersonnelClassID>
+			</PersonnelRequirement>
+		</ProductSegment>
+	</ProductDefinition>
+
+	<!-- 8. غسالة مدمجة Compact X -->
+	<ProductDefinition>
+		<SKU>WASH-COMP-X</SKU>
+		<Description>Compact Space-Saver Washer</Description>
+		<Version>1.1</Version>
+		<ProductSegment>
+			<SequenceNo>10</SequenceNo>
+			<SequenceName>Mini-Drum Balancing</SequenceName>
+			<EquipmentRequirement>
+				<EquipmentClassID>Precision-Balancer</EquipmentClassID>
+			</EquipmentRequirement>
+			<PersonnelRequirement>
+				<PersonnelClassID>Junior_Assembler</PersonnelClassID>
+			</PersonnelRequirement>
+			<Parameter>
+				<Tag>VIBRATION_LIMIT</Tag>
+				<Value>0.05</Value>
+				<UnitOfMeasure>mm/s</UnitOfMeasure>
+			</Parameter>
+		</ProductSegment>
+	</ProductDefinition>
+
+	<!-- 9. غسالة الموديل الاحترافي V5 -->
+	<ProductDefinition>
+		<SKU>WASH-PRO-V5</SKU>
+		<Description>Professional Series V5 High-Efficiency</Description>
+		<Version>5.0</Version>
+		<ProductSegment>
+			<SequenceNo>40</SequenceNo>
+			<SequenceName>Final Quality Stress Test</SequenceName>
+			<EquipmentRequirement>
+				<EquipmentClassID>Quality-Audit-Station</EquipmentClassID>
+			</EquipmentRequirement>
+			<PersonnelRequirement>
+				<PersonnelClassID>Quality_Engineer</PersonnelClassID>
+			</PersonnelRequirement>
+			<Parameter>
+				<Tag>SPIN_SPEED_MAX</Tag>
+				<Value>1600</Value>
+				<UnitOfMeasure>RPM</UnitOfMeasure>
+			</Parameter>
+		</ProductSegment>
+	</ProductDefinition>
+
+	<!-- 10. المنتج الهجين Combo H1 -->
+	<ProductDefinition>
+		<SKU>APP-COMBO-H1</SKU>
+		<Description>Washer-Dryer Hybrid Combo</Description>
+		<Version>1.0</Version>
+		<ProductSegment>
+			<SequenceNo>10</SequenceNo>
+			<SequenceName>Dual System Integration</SequenceName>
+			<EquipmentRequirement>
+				<EquipmentClassID>Manual-Assembly-Line</EquipmentClassID>
+			</EquipmentRequirement>
+			<MaterialRequirement>
+				<MaterialDefinitionID>HYBRID-CONTROL-BOARD</MaterialDefinitionID>
+				<Quantity>1</Quantity>
+			</MaterialRequirement>
+			<PersonnelRequirement>
+				<PersonnelClassID>Senior_Fabricator</PersonnelClassID>
+			</PersonnelRequirement>
+		</ProductSegment>
+	</ProductDefinition>
 
 </ProductDefinitions>

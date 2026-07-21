@@ -8,8 +8,6 @@ namespace MesApp.Controllers
     public class ProductSyncController : ControllerBase
     {
         private readonly ISapSyncService _sapService;
-
-        // حقن السيرفس عبر الـ Constructor
         public ProductSyncController(ISapSyncService sapService)
         {
             _sapService = sapService;
@@ -20,8 +18,12 @@ namespace MesApp.Controllers
         {
             try
             {
-                var products = _sapService.ParseSapXmlData();
-                return Ok(products);
+                var allProducts = _sapService.ParseSapXmlData();
+
+                var newProductsOnly = allProducts
+                    .Where(p => p.DefinitionStatus != "Released")
+                    .ToList();
+                return Ok(newProductsOnly); 
             }
             catch (FileNotFoundException ex)
             {

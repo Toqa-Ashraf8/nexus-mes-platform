@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 public class ProductMaster
   {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    [JsonIgnore]
+    public int ProductMasterId { get; set; }
 
     [Required]
     [StringLength(50)]
@@ -16,10 +18,11 @@ public class ProductMaster
     public string Version { get; set; } = "1.0";
 
     public string? Description { get; set; }
+    [JsonIgnore]
+    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
+    public string DefinitionStatus { get; set; } 
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-    public ICollection<ProcessSegment> Segments { get; set; } = new List<ProcessSegment>();
+    public ICollection<ProcessSegment> ProductSegments { get; set; } = new List<ProcessSegment>();
 
 
 
