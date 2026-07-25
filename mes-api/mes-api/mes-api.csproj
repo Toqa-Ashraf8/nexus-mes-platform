@@ -39,6 +39,10 @@
 
   <ItemGroup>
     <Folder Include="Extensions\" />
+    <Folder Include="ExternalServices\" />
+    <Folder Include="Images\InstructionSteps\" />
+    <Folder Include="Images\StepCategory\" />
+    <Folder Include="Videos\InstructionSteps\" />
   </ItemGroup>
 	<ItemGroup>
 		<None Update="MockSAPData\ProductsSync.xml">

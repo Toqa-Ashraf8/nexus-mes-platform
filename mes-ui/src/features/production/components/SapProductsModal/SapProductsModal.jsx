@@ -11,8 +11,7 @@ const SapProductsModal = () => {
 
 useEffect(()=>{
     dispatch(fetchSapProducts());
-},[dispatch])
-console.log("products",products)
+},[dispatch]) 
   return (
     <div className="sap-modal-overlay" >
       <div className="sap-modal-container" onClick={(e) => e.stopPropagation()}>

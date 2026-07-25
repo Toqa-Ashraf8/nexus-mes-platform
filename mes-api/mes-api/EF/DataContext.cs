@@ -10,10 +10,14 @@ public class DataContext : DbContext
     public DbSet<ProcessSegment> ProcessSegments { get; set; }
     public DbSet<SegmentBomItem> SegmentBomItems { get; set; }
     public DbSet<PLCParameter> PLCParameters { get; set; }
-
+    public DbSet <WorkInstructionStep> WorkInstructionSteps { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<ProductMaster>()
+            .HasMany(p => p.ProductSegments)
+            .WithOne() 
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<ProcessSegment>()
             .HasOne(s => s.ProductMasters)

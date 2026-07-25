@@ -1,11 +1,14 @@
 :root {
-  --inv-color: #2dd4bf;   
-  --pur-color: #fbbf24;   
-  --prod-color: #34d399;  
-  --qa-color: #22d3ee;  
-  --maint-color: #fb923c; 
-  --log-color: #5eead4;   
-  --fin-color: #a3e635;   
+  --slate-dark: #d5501c;
+  --slate-bg: #d5501c;
+  --primary: #d5501c;
+
+  --prod-color: #d5501c;    
+  --qa-color: #d5501c;       
+  --maint-color: #d5501c;   
+  --pur-color: #d5501c;      
+  --fin-color: #d5501c;    
+  --inv-color: #d5501c;     
 }
 
 .cyber-navbar {
@@ -13,13 +16,12 @@
   top: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(180deg, #0d3129 0%, #092e26 100%);
-  border-bottom: 1px solid rgba(45, 212, 191, 0.18);
+  background: var(--slate-dark);
+  border-bottom: 1px solid rgba(13, 148, 136, 0.25);
   padding: 0 20px;
   min-height: 65px;
   display: flex;
   align-items: center;
-  z-index: 9999; 
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
@@ -45,7 +47,7 @@
 .cyber-nav-btn {
   background: transparent;
   border: 1px solid transparent;
-  color: #94a3b8;
+  color: #fff;
   font-family: inherit;
   font-weight: 600;
   font-size: 12px; 
@@ -60,12 +62,12 @@
 }
 
 .cyber-nav-btn:hover {
-  background: rgba(45, 212, 191, 0.08);
+  background: rgba(13, 148, 136, 0.1);
   color: #e2e8f0;
 }
 
 .cyber-dropdown-wrapper.active .cyber-nav-btn {
-  background: rgba(45, 212, 191, 0.12);
+  background: rgba(13, 148, 136, 0.15);
   color: #f1f5f9;
 }
 
@@ -91,8 +93,8 @@
   top: 40px; 
   left: 0;
   width: 250px;
-  background: #0f2027;
-  border: 1px solid rgba(45, 212, 191, 0.3); 
+  background: var(--slate-dark) !important;
+  border: 1px solid rgba(13, 148, 136, 0.2);
   border-radius: 8px;
   padding: 6px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
@@ -128,7 +130,7 @@
 }
 
 .cyber-menu-item:hover {
-  background: rgba(45, 212, 191, 0.08);
+  background: rgba(13, 148, 136, 0.12);
 }
 
 .item-icon-box {
@@ -190,82 +192,35 @@
     opacity: 0.6; 
   }
 }
-.inv-icon   { 
-  color: var(--inv-color); 
-}
-.pur-icon   { 
-  color: var(--pur-color); 
-}
-.prod-icon  { 
-  color: var(--prod-color); 
-}
-.qa-icon    { 
-  color: var(--qa-color); 
-}
-.maint-icon { 
-  color: var(--maint-color); 
-}
-.log-icon   { 
-  color: var(--log-color); 
-}
-.fin-icon   { 
-  color: var(--fin-color); 
-}
-.item-icon-box.inv-box   { 
-  background: rgba(45, 212, 191, 0.12); 
-  color: var(--inv-color); 
-}
-.item-icon-box.pur-box   { 
-  background: rgba(251, 191, 36, 0.12); 
-  color: var(--pur-color); 
-}
-.item-icon-box.prod-box  { 
-  background: rgba(52, 211, 153, 0.12); 
-  color: var(--prod-color); 
-}
-.item-icon-box.qa-box    { 
-  background: rgba(34, 211, 238, 0.12); 
-  color: var(--qa-color); 
-}
-.item-icon-box.maint-box { 
-  background: rgba(251, 146, 60, 0.12); 
-  color: var(--maint-color);
- }
-.item-icon-box.log-box   { 
-  background: rgba(94, 234, 212, 0.12); 
-  color: var(--log-color); 
-}
-.item-icon-box.fin-box   { 
-  background: rgba(163, 230, 53, 0.12); 
-  color: var(--fin-color); 
-}
+
+.inv-icon   { color: var(--inv-color); }
+.pur-icon   { color: var(--pur-color); }
+.prod-icon  { color: var(--prod-color); }
+.qa-icon    { color: var(--qa-color); }
+.maint-icon { color: var(--maint-color); }
+.log-icon   { color: var(--log-color, var(--prod-color)); }
+.fin-icon   { color: var(--fin-color); }
+
+.item-icon-box.inv-box   { background: rgba(5, 150, 105, 0.12);  color: var(--inv-color); }
+.item-icon-box.pur-box   { background: rgba(37, 99, 235, 0.12);  color: var(--pur-color); }
+.item-icon-box.prod-box  { background: rgba(13, 148, 136, 0.12); color: var(--prod-color); }
+.item-icon-box.qa-box    { background: rgba(8, 145, 178, 0.12);  color: var(--qa-color); }
+.item-icon-box.maint-box { background: rgba(124, 58, 237, 0.12); color: var(--maint-color); }
+.item-icon-box.log-box   { background: rgba(13, 148, 136, 0.12); color: var(--prod-color); }
+.item-icon-box.fin-box   { background: rgba(202, 138, 4, 0.12);  color: var(--fin-color); }
 
 @keyframes box-float { 
-  0%, 100% { 
-    transform: translateY(0); 
-  } 
-  50% { 
-    transform: translateY(-2px); 
-  } 
+  0%, 100% { transform: translateY(0); } 
+  50% { transform: translateY(-2px); } 
 }
 @keyframes cart-bounce { 
-  0%, 100% { 
-    transform: translateX(0) rotate(0deg); 
-  } 
-  25% { 
-    transform: translateX(-1.5px) rotate(-6deg); 
-  } 
-  75% { 
-    transform: translateX(1.5px) rotate(6deg); 
-  } 
+  0%, 100% { transform: translateX(0) rotate(0deg); } 
+  25% { transform: translateX(-1.5px) rotate(-6deg); } 
+  75% { transform: translateX(1.5px) rotate(6deg); } 
 }
 @keyframes gear-spin { 
-  from { 
-    transform: rotate(0deg); 
-  } 
-  to { 
-    transform: rotate(360deg); 
-  } 
+  from { transform: rotate(0deg); } 
+  to { transform: rotate(360deg); } 
 }
 @keyframes shield-pulse { 
   0%, 100% { 
@@ -278,51 +233,23 @@
   } 
 }
 @keyframes wrench-swing { 
-  0%, 100% { 
-    transform: rotate(0deg); 
-  } 
-  25% { 
-    transform: rotate(-12deg); 
-  } 
-  75% { 
-    transform: rotate(12deg); 
-  } 
+  0%, 100% { transform: rotate(0deg); } 
+  25% { transform: rotate(-12deg); } 
+  75% { transform: rotate(12deg); } 
 }
 @keyframes truck-drive { 
-  0%, 100% { 
-    transform: translateX(0); 
-  } 
-  50% { 
-    transform: translateX(2px); 
-  } 
+  0%, 100% { transform: translateX(0); } 
+  50% { transform: translateX(2px); } 
 }
 @keyframes coin-pulse { 
-  0%, 100% { 
-    transform: scale(1); 
-  } 
-  50% { 
-    transform: scale(1.1) rotate(5deg); 
-  } 
+  0%, 100% { transform: scale(1); } 
+  50% { transform: scale(1.1) rotate(5deg); } 
 }
 
-.inv-icon   { 
-  animation: box-float 2.2s ease-in-out infinite; 
-}
-.pur-icon   {
-   animation: cart-bounce 1.6s ease-in-out infinite; 
-  }
-.prod-icon  { 
-  animation: gear-spin 4s linear infinite; 
-}
-.qa-icon    { 
-  animation: shield-pulse 2s ease-in-out infinite; 
-}
-.maint-icon {
-   animation: wrench-swing 1.5s ease-in-out infinite; 
-  }
-.log-icon   {
-   animation: truck-drive 1.5s ease-in-out infinite; 
-  }
-.fin-icon   { 
-  animation: coin-pulse 1.8s ease-in-out infinite; 
-}
+.inv-icon   { animation: box-float 2.2s ease-in-out infinite; }
+.pur-icon   { animation: cart-bounce 1.6s ease-in-out infinite; }
+.prod-icon  { animation: gear-spin 4s linear infinite; }
+.qa-icon    { animation: shield-pulse 2s ease-in-out infinite; }
+.maint-icon { animation: wrench-swing 1.5s ease-in-out infinite; }
+.log-icon   { animation: truck-drive 1.5s ease-in-out infinite; }
+.fin-icon   { animation: coin-pulse 1.8s ease-in-out infinite; }

@@ -1,4 +1,5 @@
 ﻿ public interface ISapSyncService
     {
-        List<ProductDefinitionDto> ParseSapXmlData();
+        List<ProductMasterDTO> ParseSapXmlData();
+        Task<List<ProductMaster>> SaveSapProductsToDb();
     }

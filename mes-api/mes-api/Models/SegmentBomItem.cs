@@ -8,16 +8,12 @@ public class SegmentBomItem
         [JsonIgnore]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string MaterialDefinitionID { get; set; } 
+        public string? MaterialDefinition { get; set; } 
 
-        [Required]
-        [Column(TypeName = "decimal(18,4)")]
-        public decimal Quantity { get; set; } 
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? Quantity { get; set; } 
 
-        [StringLength(10)]
-        public string UnitOfMeasure { get; set; } = "pcs";
+        public string? UnitOfMeasure { get; set; } 
         [JsonIgnore]
         public int? ProcessSegmentId { get; set; }
         [JsonIgnore]

@@ -8,22 +8,20 @@ namespace MesApp.Controllers
     public class ProductSyncController : ControllerBase
     {
         private readonly ISapSyncService _sapService;
-        public ProductSyncController(ISapSyncService sapService)
+        private readonly IProcessDefinitionRepository _repo;
+        public ProductSyncController(ISapSyncService sapService, IProcessDefinitionRepository repo)
         {
             _sapService = sapService;
+            _repo = repo;
         }
 
         [HttpGet("products")]
-        public IActionResult GetSapProducts()
+        public async Task< IActionResult> GetSapProducts()
         {
             try
             {
-                var allProducts = _sapService.ParseSapXmlData();
-
-                var newProductsOnly = allProducts
-                    .Where(p => p.DefinitionStatus != "Released")
-                    .ToList();
-                return Ok(newProductsOnly); 
+                var allProducts =await _repo.GetAllProducts();
+                return Ok(allProducts); 
             }
             catch (FileNotFoundException ex)
             {

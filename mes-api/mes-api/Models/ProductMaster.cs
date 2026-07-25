@@ -20,12 +20,9 @@ public class ProductMaster
     public string? Description { get; set; }
     [JsonIgnore]
     public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
-    public string DefinitionStatus { get; set; } 
+    public string? DefinitionStatus { get; set; } 
 
     public ICollection<ProcessSegment> ProductSegments { get; set; } = new List<ProcessSegment>();
-
-
-
 
 }
 

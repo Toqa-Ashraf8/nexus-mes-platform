@@ -9,20 +9,10 @@ public class PLCParameter
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [JsonIgnore]
         public int PlcParameterId { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string Tag { get; set; } 
-
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal Value { get; set; } 
-
-        [Required]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal Tolerance { get; set; }
-
-        [StringLength(20)]
+        public string? Tag { get; set; } 
+   
+        public decimal? Value { get; set; } 
+        public decimal? Tolerance { get; set; }
         public string? UnitOfMeasure { get; set; }
         [JsonIgnore]
         public int? ProcessSegmentId { get; set; }

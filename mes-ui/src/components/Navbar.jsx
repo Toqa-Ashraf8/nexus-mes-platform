@@ -96,16 +96,7 @@ const MODULES = [
       { to: '/raw-material-reception', label: 'Material Reception', icon: FiBox },
     ],
   }, 
-  {
-    key: 'integration',
-    label: 'Integration Monitor',
-    icon: FiDatabase,
-    header: 'System Integration Monitor',
-    colorClass: 'log', 
-    items: [
-      { to: '/erp-message-log', label: 'ERP Message Log', icon: FiFileText },
-    ],
-  },
+ 
 ];
 
 const Navbar = () => {

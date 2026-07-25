@@ -2,46 +2,68 @@ import React from 'react';
 import { 
   FiPlus, 
   FiTrash2, 
-  FiSave, 
   FiPackage, 
   FiSettings, 
   FiList, 
-  FiFileText, 
-  FiLayers,
-  FiRefreshCw,
-  FiCopy,
-  FiCheckCircle,
-  FiSend
+  FiFileText,  
+  FiSend, 
+  FiUserPlus, 
+  FiCpu, 
+  FiImage, 
+  FiVideo, 
+  FiEdit, 
+  FiX, 
+  FiEye, 
+  FiCopy, 
+  FiClock,
+  FiDatabase,
+  FiShield
 } from 'react-icons/fi';
+
 import './ProcessDefinition.css';
 import { useDispatch, useSelector } from 'react-redux';
 import SapProductsModal from '../components/SapProductsModal/SapProductsModal';
 import { 
   setProductsValues, 
-  toggleProductsModal,
-  addSegmentToProduct,
-  removeSegmentFromProduct,
-  addEquipmentRequirement,
+  addSegmentToProduct, 
+  insertSegmentBetween,
+  removeSegmentFromProduct, 
+  addEquipmentRequirement, 
   updateEquipmentRequirement,
-  removeEquipmentRequirement,
-  addPersonnelRequirement,
+  removeEquipmentRequirement, 
+  addPersonnelRequirement, 
   updatePersonnelRequirement,
-  removePersonnelRequirement,
-  addMaterialRequirement,
-  updateMaterialRequirement,
-  removeMaterialRequirement,
-  addParameter,
-  updateParameter,
-  removeParameter,
-  updateSegmentField,
-  setSegmentActiveTab
+  removePersonnelRequirement, 
+  addMaterialRequirement, 
+  updateMaterialRequirement, 
+  removeMaterialRequirement, 
+  addParameter, 
+  updateParameter, 
+  removeParameter, 
+  updateSegmentField, 
+  setSegmentActiveTab,
+  deleteInstructionStep,
+  setViewSopModal,
+  resetProductForm,
+  toggleProductsModal,
+  toggleActiveStepModal
 } from '../slices/processDefinitionSlice';
 import { toast } from 'react-toastify';
-import { fetchSapProducts, releaseProduct } from '../services/processDefinitionService';
+import { fetchSapProducts, releaseProduct, saveSapProducts } from '../services/processDefinitionService';
+import { IoSearch } from "react-icons/io5";
+import WorkInstructionsModal from '../components/WorkInstructionsModal/WorkInstructionsModal';
+import { AiOutlineClear } from "react-icons/ai";
 
 const ProcessDefinition = () => {
-  const { isProductsModalOpen, product } = useSelector((state) => state.processDefinition);
+  const ImageUrl = import.meta.env.VITE_IMAGES_BASE_URL;
   const dispatch = useDispatch();
+  const { 
+    isProductsModalOpen, 
+    product, 
+    activeStepModal, 
+    viewSopModal,
+    products 
+  } = useSelector((state) => state.processDefinition);
   const currentSegments = product?.ProductSegments || [];
 
   const handleChangeProduct = (e) => {
@@ -49,103 +71,116 @@ const ProcessDefinition = () => {
     dispatch(setProductsValues({ [name]: value }));
   };
 
-  const handleCloneRoute = () => {
-    alert('Opening Clone Route Selection Modal...');
+  const handleApproveAndRelease = async () => {
+    try { 
+      const result = await dispatch(releaseProduct(product)).unwrap();
+      if (result) toast.success(result.message || "Product Definition released!");
+    } catch (error) { 
+      toast.error(error);
+    } 
+    dispatch(fetchSapProducts());
   };
 
-  const handleValidateConfig = () => {
-    alert('Validating Route sequence, station assignments, and PLC tolerances...');
-  };
-
-  const handleSaveDraft = () => {
-    alert('Saving current configuration as Draft...');
-  };
-
-  const handleApproveAndRelease = async()=> {
-    const releasedProduct={...product,DefinitionStatus:"Released"};
-   try { 
-    const result=await dispatch(releaseProduct(releasedProduct)).unwrap();
-    if(result){
-      toast.success(result.message || "Product Definition successfully approved & saved!");
+  const handleClearAll = () => {
+    if (window.confirm("Are you sure you want to clear all data on this screen?")) {
+      dispatch(resetProductForm());
+      toast.warn("Screen reset to new blank sheet.");
     }
-   } catch (error) { toast.error(error)} 
-     dispatch(fetchSapProducts());
   };
+
+  const handleInsertSegmentBetween = (indexBefore) => {
+    dispatch(insertSegmentBetween(indexBefore));
+    toast.info(`Inserted Step`);
+  };
+
+  const handleSaveSapData = async () => {
+    try {
+      const result = await dispatch(saveSapProducts()).unwrap();
+      if (result) {
+        toast.success(result.message);
+      }
+    } catch (error) {}
+  };
+
+  const handleAddInstructionStep = (segIdx) => {
+    const steps = currentSegments[segIdx]?.WorkInstructionSteps || [];
+    const newStep = {
+      StepSequence: steps.length + 1,
+      Description: '',
+      Category: '',
+      CategoryUrl: '',
+      ImageUrl: '',
+      VideoUrl: ''
+    };
+    dispatch(toggleActiveStepModal({ segIdx, stepIdx: steps.length, stepData: newStep, isNew: true }));
+  };
+console.log("product",product)
+console.log("products",products)
 
   return (
     <div className="mes-container">
       {isProductsModalOpen && <SapProductsModal />}
+      {activeStepModal && <WorkInstructionsModal />}
       
-      <header className="mes-navbar">
-        <div className="mes-logo-zone">
-          <div>
-            <h1>Product Definition Master</h1>
-            <p>Production Routing & Process Recipe Configuration</p>
-          </div>
-        </div>
-        
-        <div className="mes-nav-actions">
-          <button className="mes-btn-outline" onClick={() => dispatch(toggleProductsModal(true))}>
-            <FiRefreshCw /> Fetch from SAP
-          </button>
-          <button className="mes-btn-outline" onClick={handleCloneRoute}>
-            <FiCopy /> Clone Existing Route
-          </button>
+      <aside className="mes-actions-sidebar">
+        <button className="sidebar-action-btn sync" onClick={handleSaveSapData}>
+          <FiDatabase /><span className="tooltip">Save SAP Data</span>
+        </button>
+        <button className="sidebar-action-btn search" onClick={() => dispatch(toggleProductsModal(true))}>
+          <IoSearch /><span className="tooltip">Get Products</span>
+        </button>
+        <button className="sidebar-action-btn save" onClick={handleApproveAndRelease}>
+          <FiSend /><span className="tooltip">Release Product Definition</span>
+        </button>
+        <button className="sidebar-action-btn verify" onClick={handleClearAll}>
+          <AiOutlineClear /><span className="tooltip">Clear Form</span>
+        </button>
+        <button className="sidebar-action-btn duplicate">
+          <FiFileText /><span className="tooltip">Save as Draft</span>
+        </button>
+        <button className="sidebar-action-btn undo">
+          <FiShield /><span className="tooltip">Validation</span>
+        </button>
+        <button className="sidebar-action-btn clone">
+          <FiCopy /><span className="tooltip">Clone Product</span>
+        </button>
+      </aside>
+
+      {/* Main Navbar */}
+      <header className="mes-navbar centered">
+        <div className="mes-title-centered">
+          <h1>Product Definition Master</h1>
+          <p>Production Routing & Process Recipe Configuration</p>
         </div>
       </header>
 
       <main className="mes-workspace">
-        <section className="mes-meta-bar">
+        {/* Routing Meta Header */}
+        <section className="mes-meta-bar" style={{ textAlign: 'center' }}>
           <div className="meta-item">
             <span className="meta-label">PRODUCT SKU</span>
-            <span className="meta-value">{product?.SKU || "-"}</span>
+            <input type="text" className="meta-desc-input" name="SKU" value={product?.SKU || ''} onChange={handleChangeProduct} /> 
           </div>
           <div className="meta-item">
             <span className="meta-label">ROUTE VERSION</span>
-            <input 
-              type="text" 
-              className="meta-desc-input"
-              name="Version"
-              value={product?.Version || ''}
-              onChange={handleChangeProduct}
-            /> 
+            <input type="text" className="meta-desc-input" name="Version" value={product?.Version || ''} onChange={handleChangeProduct} /> 
           </div>
           <div className="meta-item description-item">
             <span className="meta-label">ROUTE DESCRIPTION</span>
-            <input 
-              type="text" 
-              className="meta-desc-input"
-              name="Description"
-              value={product?.Description || ''}
-              onChange={handleChangeProduct}
-            /> 
-          </div>
-
-          <div className="meta-actions-zone">
-            <button className="mes-btn-secondary" onClick={handleValidateConfig}>
-              <FiCheckCircle /> Validate Configuration
-            </button>
-            <button className="mes-btn-secondary" onClick={handleSaveDraft}>
-              <FiSave /> Save as Draft
-            </button>
-            <button className="mes-btn-success" onClick={handleApproveAndRelease}>
-              <FiSend /> Approve & Release
-            </button>
+            <input type="text" className="meta-desc-input" name="Description" value={product?.Description || ''} onChange={handleChangeProduct} /> 
           </div>
         </section>
 
+        {/* Process Flow Operations */}
         <div className="mes-routing-flow">
-          {currentSegments.length === 0 ? ( 
-            <div className="mes-empty-state" style={{ padding: '40px', textAlign: 'center' }}>
-              <FiLayers size={40} style={{ color: '#64748b', marginBottom: '12px' }} />
-              <p style={{ color: '#94a3b8' }}>No process routing segments loaded yet. Fetch from SAP or click below to add a step.</p>
-            </div>
-          ) : (
-            currentSegments.map((seg, segIdx) => ( 
-              <div key={seg.SequenceNo || segIdx} className="mes-step-card">
+          {currentSegments.map((seg, segIdx) => ( 
+            <React.Fragment key={seg.SequenceNo || segIdx}>
+              
+              <div className="mes-step-card">
+                {/* Step Header */}
                 <div className="mes-step-header">
                   <div className="step-ident">
-                    <span className="step-seq-badge">{seg.SequenceNo || '0'}</span>
+                    <span className="step-seq-badge">Step {seg.SequenceNo || (segIdx + 1) * 10}</span>
                     <input 
                       type="text" 
                       className="step-name-input-field" 
@@ -157,218 +192,261 @@ const ProcessDefinition = () => {
                   
                   <div className="mes-tabs-row">
                     <button 
-                      className={`tab-trigger ${(!seg.activeTab || seg.activeTab === 'station') ? 'active' : ''}`}
+                      className={`tab-trigger ${(!seg.activeTab || seg.activeTab === 'station') ? 'active' : ''}`} 
                       onClick={() => dispatch(setSegmentActiveTab({ segIdx, tabName: 'station' }))}
                     >
-                      <FiSettings /> Resources
+                      <FiSettings /> Resources & SOP
                     </button>
                     <button 
-                      className={`tab-trigger ${seg.activeTab === 'bom' ? 'active' : ''}`}
+                      className={`tab-trigger ${seg.activeTab === 'bom' ? 'active' : ''}`} 
                       onClick={() => dispatch(setSegmentActiveTab({ segIdx, tabName: 'bom' }))}
                     >
-                      <FiPackage /> BOM Allocation ({seg.MaterialRequirements?.length || 0})
+                      <FiPackage /> BOM Allocation
                     </button>
                     <button 
-                      className={`tab-trigger ${seg.activeTab === 'parameters' ? 'active' : ''}`}
+                      className={`tab-trigger ${seg.activeTab === 'parameters' ? 'active' : ''}`} 
                       onClick={() => dispatch(setSegmentActiveTab({ segIdx, tabName: 'parameters' }))}
                     >
-                      <FiList /> PLC Recipes ({seg.Parameters?.length || 0}) 
+                      <FiList /> PLC Recipes
                     </button>
                   </div>
 
-                  <button className="mes-btn-danger-icon" onClick={() => dispatch(removeSegmentFromProduct(segIdx))}>
+                  <button 
+                    className="mes-btn-danger-icon" 
+                    title="Delete Operation" 
+                    onClick={() => dispatch(removeSegmentFromProduct(segIdx))}
+                  >
                     <FiTrash2 />
                   </button>
                 </div>
 
+                {/* Step Body */}
                 <div className="mes-step-body">
+                  
+                  {/* TAB 1: RESOURCES & SOP */}
                   {(!seg.activeTab || seg.activeTab === 'station') && (
                     <div className="tab-content-grid animate-fade">
+                      
                       <div className="resource-inputs">
-                        
+                        {/* Step Standard Duration */}
                         <div className="mes-form-group">
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                            <label>Equipment Classes / Workstations ({seg.EquipmentRequirements?.length || 0})</label>
+                          <div className="group-header">
+                            <label><FiClock /> Operation Duration</label>
                           </div>
-
-                          {seg.EquipmentRequirements?.map((eq, eqIdx) => (
-                            <div key={eqIdx} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                              <select 
-                                className="mes-input"
-                                value={eq.EquipmentClassID || ''}
-                                onChange={(e) => dispatch(updateEquipmentRequirement({ segIdx, eqIdx, value: e.target.value }))}
-                              >
-                                <option value="">Select Workstation</option>
-                                <option key={eq.EquipmentClassID} value={eq.EquipmentClassID}>{eq.EquipmentClassID}</option>
-                              </select>
-                              <button 
-                                type="button" 
-                                className="btn-row-delete" 
-                                onClick={() => dispatch(removeEquipmentRequirement({ segIdx, eqIdx }))}
-                              >
-                                <FiTrash2 />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="mes-form-group">
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                            <label>Personnel Classes ({seg.PersonnelRequirements?.length || 0})</label>
-                          </div>
-
-                          {seg.PersonnelRequirements?.map((person, pIdx) => (
-                            <div key={pIdx} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                              <select 
-                                className="mes-input"
-                                value={person.PersonnelClassID || ''}
-                                onChange={(e) => dispatch(updatePersonnelRequirement({ segIdx, pIdx, value: e.target.value }))}
-                              > 
-                                <option value="">Select Personnel</option>
-                                <option key={person.PersonnelClassID} value={person.PersonnelClassID}>{person.PersonnelClassID}</option>
-                               
-                              </select>
-                              <button 
-                                type="button" 
-                                className="btn-row-delete" 
-                                onClick={() => dispatch(removePersonnelRequirement({ segIdx, pIdx }))}
-                              >
-                                <FiTrash2 />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="mes-form-group">
-                          <label>Standard Execution Time</label>
                           <div className="mes-input-unit-wrapper">
                             <input 
                               type="number" 
                               className="mes-input" 
-                              value={seg.standardTimeMin || ''}
+                              value={seg.standardTimeMin || ''} 
                               onChange={(e) => dispatch(updateSegmentField({ segIdx, fieldName: 'standardTimeMin', value: e.target.value }))}
                             />
-                            <span className="input-unit-tag">Min</span>
+                            <span className="input-unit-tag">min</span>
                           </div>
+                        </div>
+
+                        <div className="mes-form-group">
+                          <div className="group-header">
+                            <label><FiCpu /> Workstations / Equipment</label>
+                            <button type="button" className="mes-btn-secondary-sm" onClick={() => dispatch(addEquipmentRequirement(segIdx))}>
+                              <FiPlus /> Add
+                            </button>
+                          </div>
+                          {seg.EquipmentRequirements && seg.EquipmentRequirements.length > 0 ? (
+                            seg.EquipmentRequirements.map((eq, eqIdx) => (
+                              <div key={eqIdx} className="input-action-row">
+                                <input 
+                                  type="text" 
+                                  className="mes-input" 
+                                  placeholder="Enter workstation or equipment class..." 
+                                  value={eq.EquipmentClassName || eq.EquipmentClassID || ''} 
+                                  onChange={(e) => dispatch(updateEquipmentRequirement({ segIdx, eqIdx, value: e.target.value }))}
+                                />
+                                <button type="button" className="btn-row-delete" onClick={() => dispatch(removeEquipmentRequirement({ segIdx, eqIdx }))}>
+                                  <FiTrash2 />
+                                </button>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="no-items-hint">No equipment assigned to this operation.</p>
+                          )}
+                        </div>
+
+                        {/* Personnel Roles Requirements */}
+                        <div className="mes-form-group">
+                          <div className="group-header">
+                            <label><FiUserPlus /> Personnel Roles</label>
+                            <button type="button" className="mes-btn-secondary-sm" onClick={() => dispatch(addPersonnelRequirement(segIdx))}>
+                              <FiPlus /> Add
+                            </button>
+                          </div>
+
+                          {seg.PersonnelRequirements && seg.PersonnelRequirements.length > 0 ? (
+                            seg.PersonnelRequirements.map((person, pIdx) => (
+                              <div className="input-action-row" key={pIdx}>
+                                <input 
+                                  type="text"
+                                  className="mes-input" 
+                                  placeholder="Enter personnel role..."
+                                  value={person.PersonnelClassName || person.PersonnelClassID || ""}
+                                  onChange={(e) => dispatch(updatePersonnelRequirement({ segIdx, pIdx, value: e.target.value }))}
+                                />
+                                <button type="button" className="btn-row-delete" onClick={() => dispatch(removePersonnelRequirement({ segIdx, pIdx }))}>
+                                  <FiTrash2 />
+                                </button>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="no-items-hint">No personnel roles assigned.</p>
+                          )} 
                         </div>
                       </div>
 
+                      {/* Standard Work Instructions (SOP) Zone */}
                       <div className="sop-editor-zone">
-                        <label className="sop-label"><FiFileText /> Operator Digital SOP Instructions</label>
-                        <textarea 
-                          className="mes-textarea"
-                          value={seg.Instructions || ''}
-                          onChange={(e) => dispatch(updateSegmentField({ segIdx, fieldName: 'Instructions', value: e.target.value }))}
-                          placeholder="Write dynamic step-by-step SOP instructions for the station HMI display..."
-                        />
-                      </div>
-                    </div>
-                  )}
+                        <div className="sop-header-bar">
+                          <label className="sop-label"><FiFileText /> Standard Work Instructions (SOP)</label>
+                          <span className="sop-count-badge">{seg.WorkInstructionSteps?.length || 0} Steps</span>
+                        </div>
 
-                  {seg.activeTab === 'bom' && (
-                    <div className="tab-content-clean animate-fade">
-                      <div className="bom-allocation-header" style={{ marginBottom: '12px', textAlign: 'right' }}>
-                        <button className="mes-btn-secondary-sm" onClick={() => dispatch(addMaterialRequirement(segIdx))}>
-                          <FiPlus /> Add Material Item
-                        </button>
-                      </div>
-
-                      <div className="bom-items-table-view">
-                        {(!seg.MaterialRequirements || seg.MaterialRequirements.length === 0) ? (
-                          <div className="mes-empty-state">
-                            <FiLayers size={24} />
-                            <p>No materials linked to this operation segment yet.</p>
-                          </div>
-                        ) : (
-                          <div className="bom-table-grid">
-                            <div className="bom-table-header">
-                              <span>Material Definition ID</span>
-                              <span>Target Qty</span>
-                              <span>Unit</span>
-                              <span>Action</span>
+                        <div className="instruction-bubbles-row">
+                          {seg.WorkInstructionSteps?.map((st, stIdx) => (
+                            <div 
+                              key={stIdx} 
+                              className="step-circle-btn" 
+                              onClick={() => dispatch(toggleActiveStepModal({ segIdx, stepIdx: stIdx, stepData: { ...st }, isNew: false }))}
+                            >
+                              {st.StepSequence || stIdx + 1}
                             </div>
-                            {seg.MaterialRequirements.map((item, bIdx) => (
-                              <div key={bIdx} className="bom-table-row">
-                               
-                                <input 
-                                  type="text" 
-                                  className="recipe-input-txt"
-                                  value={item.MaterialDefinitionID || ''}
-                                  onChange={(e) => dispatch(updateMaterialRequirement({ segIdx, matIdx: bIdx, fieldName: 'MaterialDefinitionID', value: e.target.value }))}
-                                />
-                                <input 
-                                  type="number" 
-                                  className="bom-qty-input" 
-                                  value={item.Quantity || ""}
-                                  onChange={(e) => dispatch(updateMaterialRequirement({ segIdx, matIdx: bIdx, fieldName: 'Quantity', value: e.target.value }))}
-                                />
-                                <input 
-                                  type="text" 
-                                  className="recipe-input-unit"
-                                  value={item.UnitOfMeasure || ''}
-                                  onChange={(e) => dispatch(updateMaterialRequirement({ segIdx, matIdx: bIdx, fieldName: 'UnitOfMeasure', value: e.target.value }))}
-                                />
-                                <button className="btn-row-delete" onClick={() => dispatch(removeMaterialRequirement({ segIdx, matIdx: bIdx }))}>
-                                  <FiTrash2 />
-                                </button>
+                          ))}
+                          <button className="step-circle-add" onClick={() => handleAddInstructionStep(segIdx)}>
+                            <FiPlus />
+                          </button>
+                        </div>
+
+                        {(!seg.WorkInstructionSteps || seg.WorkInstructionSteps.length === 0) ? (
+                          <div className="sop-empty-box">No instruction steps. Click <FiPlus /> circle to add.</div>
+                        ) : (
+                          <div className="sop-steps-table">
+                            {seg.WorkInstructionSteps.map((st, stIdx) => (
+                              <div key={stIdx} className="sop-table-row">
+                                <span className="sop-seq">{st.StepSequence}</span>
+                                {st.CategoryUrl && <img src={`${ImageUrl}Images/StepCategory/${st.CategoryUrl}`} className="sop-mini-symbol" alt="Symbol" />}
+                                <div className="sop-desc">{st.Description || <i>No description</i>}</div>
+                                
+                                <div className="sop-media-indicators">
+                                  {st.ImageUrls?.length > 0 && <span className="media-tag img"><FiImage /> {st.ImageUrls.length}</span>}
+                                  {st.VideoUrl && <span className="media-tag vid"><FiVideo /> Vid</span>}
+                                </div>
+
+                                <div className="sop-row-actions">
+                                  <button title="View SOP Sheet" onClick={() => dispatch(setViewSopModal({ segName: seg.SequenceName, step: st }))}><FiEye /></button>
+                                  <button title="Edit Step" onClick={() => dispatch(toggleActiveStepModal({ segIdx, stepIdx: stIdx, stepData: { ...st }, isNew: false }))}><FiEdit /></button>
+                                  <button title="Delete Step" className="del" onClick={() => dispatch(deleteInstructionStep({ segIdx, stepIdx: stIdx }))}><FiTrash2 /></button>
+                                </div>
                               </div>
                             ))}
                           </div>
                         )}
                       </div>
+
                     </div>
                   )}
 
+                  {/* TAB 2: BOM ALLOCATION */}
+                  {seg.activeTab === 'bom' && (
+                    <div className="tab-content-clean animate-fade">
+                      <div className="recipe-toolbar">
+                        <button className="mes-btn-secondary-sm" onClick={() => dispatch(addMaterialRequirement(segIdx))}>
+                          <FiPlus /> Add Material
+                        </button>
+                      </div>
+                      <div className="bom-items-table-view">
+                        {seg.MaterialRequirements?.map((item, bIdx) => (
+                          <div key={bIdx} className="bom-table-row">
+                            <input 
+                              type="text" 
+                              value={item.MaterialDefinitionID || item.MaterialDefinition || ''} 
+                              placeholder="Material ID" 
+                              onChange={(e) => dispatch(updateMaterialRequirement({ segIdx, matIdx: bIdx, fieldName: 'MaterialDefinitionID', value: e.target.value }))} 
+                            />
+                            <input 
+                              type="number" 
+                              value={item.Quantity || ''} 
+                              placeholder="Qty" 
+                              onChange={(e) => dispatch(updateMaterialRequirement({ segIdx, matIdx: bIdx, fieldName: 'Quantity', value: e.target.value }))} 
+                            />
+                            <input 
+                              type="text" 
+                              value={item.UnitOfMeasure || ''} 
+                              placeholder="UOM" 
+                              onChange={(e) => dispatch(updateMaterialRequirement({ segIdx, matIdx: bIdx, fieldName: 'UnitOfMeasure', value: e.target.value }))} 
+                            />
+                            <button className="btn-row-delete" onClick={() => dispatch(removeMaterialRequirement({ segIdx, matIdx: bIdx }))}>
+                              <FiTrash2 />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 3: PLC RECIPES / PARAMETERS */}
                   {seg.activeTab === 'parameters' && (
                     <div className="tab-content-clean animate-fade">
                       <div className="recipe-toolbar">
-                        <p className="section-note">Define machine setpoints and acceptable sensor tolerance values for automated PLC validation.</p>
+                        <p className="section-note">Configure target setpoints and standard manufacturing tolerances for equipment Tags.</p>
                         <button className="mes-btn-secondary-sm" onClick={() => dispatch(addParameter(segIdx))}>
-                          <FiPlus /> Add Recipe Parameter
+                          <FiPlus /> Add Tag Parameter
                         </button>
                       </div>
 
                       <div className="recipe-parameters-list">
-                        {(!seg.Parameters || seg.Parameters.length === 0) ? (
-                          <div className="mes-empty-state">
-                            <FiList size={24} />
-                            <p>No PLC parameters or HMI tolerances configured for this step.</p>
-                          </div>
-                        ) : (
-                          <div className="recipe-table">
-                            <div className="recipe-th">
-                              <span>PLC Tag / Variable</span>
-                              <span>Target Value</span>
-                              <span>UOM</span>
-                              <span>Remove</span>
+                        <div className="recipe-th">
+                          <div>PLC Tag / Parameter</div>
+                          <div>Target Setpoint</div>
+                          <div>Tolerance (±)</div>
+                          <div>Unit</div>
+                          <div style={{ textAlign: 'center' }}>Action</div>
+                        </div>
+
+                        {seg.Parameters && seg.Parameters.length > 0 ? (
+                          seg.Parameters.map((param, pIdx) => (
+                            <div key={pIdx} className="recipe-tr">
+                              <input 
+                                type="text" 
+                                value={param.Tag || ''} 
+                                placeholder="e.g. MIXER_SPEED" 
+                                onChange={(e) => dispatch(updateParameter({ segIdx, pIdx, fieldName: 'Tag', value: e.target.value }))} 
+                              />
+                              <input 
+                                type="number" 
+                                className="recipe-input-num"
+                                value={param.Value || ''} 
+                                placeholder="1200" 
+                                onChange={(e) => dispatch(updateParameter({ segIdx, pIdx, fieldName: 'Value', value: e.target.value }))} 
+                              />
+                              <input 
+                                type="number" 
+                                className="recipe-input-num"
+                                value={param.Tolerance || ''} 
+                                placeholder="5" 
+                                onChange={(e) => dispatch(updateParameter({ segIdx, pIdx, fieldName: 'Tolerance', value: e.target.value }))} 
+                              />
+                              <input 
+                                type="text" 
+                                className="recipe-input-unit"
+                                value={param.UnitOfMeasure || ''} 
+                                placeholder="RPM / °C" 
+                                onChange={(e) => dispatch(updateParameter({ segIdx, pIdx, fieldName: 'UnitOfMeasure', value: e.target.value }))} 
+                              />
+                              <button className="btn-row-delete" onClick={() => dispatch(removeParameter({ segIdx, pIdx }))}>
+                                <FiTrash2 />
+                              </button>
                             </div>
-                            
-                            {seg.Parameters.map((param, pIdx) => (
-                              <div key={pIdx} className="recipe-tr"> 
-                              
-                                <input 
-                                  type="text" 
-                                  className="recipe-input-txt"   
-                                  value={param.Tag || ''}
-                                  onChange={(e) => dispatch(updateParameter({ segIdx, pIdx, fieldName: 'Tag', value: e.target.value }))}
-                                />
-                                <input 
-                                  type="number" 
-                                  className="recipe-input-num"   
-                                  value={param.Value || ''}
-                                  onChange={(e) => dispatch(updateParameter({ segIdx, pIdx, fieldName: 'Value', value: e.target.value }))}
-                                />
-                                <input 
-                                  type="text" 
-                                  className="recipe-input-unit"
-                                  value={param.UnitOfMeasure || ''}
-                                  onChange={(e) => dispatch(updateParameter({ segIdx, pIdx, fieldName: 'UnitOfMeasure', value: e.target.value }))}
-                                />
-                                <button className="btn-row-delete" onClick={() => dispatch(removeParameter({ segIdx, pIdx }))}>
-                                  <FiTrash2 />
-                                </button>
-                              </div>
-                            ))}
+                          ))
+                        ) : (
+                          <div className="mes-empty-state">
+                            <p>No PLC recipe parameters defined for this operation segment.</p>
                           </div>
                         )}
                       </div>
@@ -377,14 +455,75 @@ const ProcessDefinition = () => {
 
                 </div>
               </div>
-            ))
-          )} 
 
+              {/* Step In-between Divider */}
+              {segIdx < currentSegments.length - 1 && (
+                <div className="mes-insert-divider">
+                  <div className="divider-line"></div>
+                  <button className="mes-btn-insert-between" onClick={() => handleInsertSegmentBetween(segIdx)}>
+                    <FiPlus /> Insert Step {Math.floor(((seg.SequenceNo || (segIdx + 1) * 10) + (currentSegments[segIdx + 1]?.SequenceNo || (segIdx + 2) * 10)) / 2)}
+                  </button>
+                  <div className="divider-line"></div>
+                </div>
+              )}
+
+            </React.Fragment>
+          ))} 
+
+          {/* Append New Step Button */}
           <button className="mes-btn-add-step-large" onClick={() => dispatch(addSegmentToProduct())}>
             <FiPlus /> Append New Operation Segment
           </button>
         </div>
       </main>
+
+      {/* View SOP Sheet Modal */}
+      {viewSopModal && (
+        <div className="mes-modal-overlay">
+          <div className="mes-modal-card sop-sheet-modal">
+            <div className="mes-modal-header">
+              <h3>STANDARD WORK INSTRUCTION SHEET</h3>
+              <button className="close-btn" onClick={() => dispatch(setViewSopModal(null))}><FiX /></button>
+            </div>
+            
+            <div className="sop-sheet-body">
+              <div className="sop-sheet-table">
+                <div className="sop-table-header">
+                  <div className="cell seq">Step</div>
+                  <div className="cell symbol">Symbol</div>
+                  <div className="cell desc">Operation Step</div>
+                  <div className="cell pics">Pictures & Media</div>
+                </div>
+
+                <div className="sop-table-content">
+                  <div className="cell seq">{viewSopModal.step.StepSequence}</div>
+                  <div className="cell symbol">
+                    {viewSopModal.step.SymbolUrl ? (
+                      <img src={viewSopModal.step.SymbolUrl} alt="Symbol" className="sheet-symbol-img" />
+                    ) : '-'}
+                  </div>
+                  <div className="cell desc">{viewSopModal.step.Description || 'No description provided.'}</div>
+                  <div className="cell pics">
+                    <div className="sheet-images-grid">
+                      {viewSopModal.step.ImageUrls?.map((url, i) => (
+                        <img key={i} src={url} alt="SOP Visual" className="sheet-media-img" />
+                      ))}
+                    </div>
+                    {viewSopModal.step.VideoUrl && (
+                      <video src={viewSopModal.step.VideoUrl} controls className="sheet-media-video" />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mes-modal-footer">
+              <button className="mes-btn-secondary" onClick={() => dispatch(setViewSopModal(null))}>Close View</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

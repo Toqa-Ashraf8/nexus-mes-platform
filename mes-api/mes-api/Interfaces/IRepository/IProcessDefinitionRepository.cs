@@ -1,6 +1,9 @@
 ﻿
     public interface IProcessDefinitionRepository
     {
-    Task<bool> ReleaseDefinition(ProductMaster product);
+        Task<List<ProductMaster>> GetAllProducts();
+         Task<ProductMaster?> GetProductBySku(string sku);
+        Task<bool> ReleaseDefinition(ProductMaster product);
+
     }
 
