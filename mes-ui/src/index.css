@@ -1,3 +1,50 @@
-body{
-  background-color: #FAF6F1!important;
+
+:root {
+  --primary: #d5501c;          
+  --primary-dark: #a83e15;     
+  --primary-light: #f3d3ba;    
+  --primary-lighter: #fbeee2;  
+  --navy: #14213d;             
+  --navy-soft: #46536d;        
+  --navy-pale: #8892a6;       
+  --bg-page: #fbeee2;          
+  --card-bg: #FFFBF6;          
+  --slate-bg: #F7E9DC;       
+  --border-color: #E8C7A6;     
+  --danger: #ef4444;
+  --danger-light: #fef2f2;
+  --success: #10b981;
+  --success-dark: #059669;
+  --text-main: var(--navy);
+  --text-muted: var(--navy-soft);
+  --slate-dark: var(--navy);
+  --slate-border: var(--border-color);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --shadow-sm: 0 1px 3px rgba(20, 33, 61, 0.08);
+  --shadow-md: 0 4px 14px rgba(20, 33, 61, 0.14);
+  --accent-sync: var(--navy);
+  --accent-sync-bg: var(--primary-lighter);
+  --accent-publish: var(--primary);
+  --accent-publish-bg: var(--primary-light);
+  --accent-save: var(--navy);
+  --accent-save-bg: var(--primary-lighter);
+  --accent-verify: var(--success-dark);
+  --accent-verify-bg: #eafaf3;
+  --accent-duplicate: var(--navy-soft);
+  --accent-duplicate-bg: var(--primary-lighter);
+  --accent-undo: var(--danger);
+  --accent-undo-bg: var(--danger-light);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-page) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
 }

@@ -2,7 +2,6 @@
   --slate-dark: #d5501c;
   --slate-bg: #d5501c;
   --primary: #d5501c;
-
   --prod-color: #d5501c;    
   --qa-color: #d5501c;       
   --maint-color: #d5501c;   
@@ -16,7 +15,7 @@
   top: 0;
   left: 0;
   right: 0;
-  background: var(--slate-dark);
+  background: var(--navy);
   border-bottom: 1px solid rgba(13, 148, 136, 0.25);
   padding: 0 20px;
   min-height: 65px;
@@ -93,7 +92,7 @@
   top: 40px; 
   left: 0;
   width: 250px;
-  background: var(--slate-dark) !important;
+  background: var(--navy) !important;
   border: 1px solid rgba(13, 148, 136, 0.2);
   border-radius: 8px;
   padding: 6px;

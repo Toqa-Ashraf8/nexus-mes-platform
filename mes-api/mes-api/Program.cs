@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json.Serialization;
+using NexusMesPlatform.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +31,9 @@ builder.Services.Configure<FormOptions>(options =>
 builder.Services.AddScoped<ISapSyncService, SapSyncService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IProcessDefinitionRepository, ProcessDefinitionRepository>();
-
+builder.Services.AddHostedService<SapFolderMonitorService>();
+builder.Services.AddScoped<ISapXmlProcessorService, SapXmlProcessorService>();
+builder.Services.AddScoped<SapXmlProcessorService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

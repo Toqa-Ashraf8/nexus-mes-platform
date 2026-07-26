@@ -11,6 +11,7 @@ public class DataContext : DbContext
     public DbSet<SegmentBomItem> SegmentBomItems { get; set; }
     public DbSet<PLCParameter> PLCParameters { get; set; }
     public DbSet <WorkInstructionStep> WorkInstructionSteps { get; set; }
+    public DbSet<WorkOrder> WorkOrders { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

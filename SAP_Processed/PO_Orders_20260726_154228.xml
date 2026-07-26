@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ProductionOrders>
+	<WorkOrder>
+		<WorkOrderNumber>PO-2026-101</WorkOrderNumber>
+		<SKU>WASH-MOD-A</SKU>
+		<TargetQuantity>150</TargetQuantity>
+		<CompletedQuantity>45</CompletedQuantity>
+		<WorkCenterId>Line-01-Main</WorkCenterId>
+		<Priority>High</Priority>
+		<Status>Unreleased</Status>
+		<PlannedStartTime>2026-07-26T08:00:00</PlannedStartTime>
+		<PlannedEndTime>2026-07-26T16:00:00</PlannedEndTime>
+		<HasException>false</HasException>
+		<ExceptionMessage></ExceptionMessage>
+	</WorkOrder>
+	<WorkOrder>
+		<WorkOrderNumber>PO-2026-102</WorkOrderNumber>
+		<SKU>WASH-SMART-X1</SKU>
+		<TargetQuantity>80</TargetQuantity>
+		<CompletedQuantity>0</CompletedQuantity>
+		<WorkCenterId>Line-02-Smart</WorkCenterId>
+		<Priority>High</Priority>
+		<Status>Unreleased</Status>
+		<PlannedStartTime>2026-07-26T10:00:00</PlannedStartTime>
+		<PlannedEndTime>2026-07-26T18:00:00</PlannedEndTime>
+		<HasException>true</HasException>
+		<ExceptionMessage>Material Shortage: Touch Screen Panel low stock</ExceptionMessage>
+	</WorkOrder>
+	<WorkOrder>
+		<WorkOrderNumber>PO-2026-103</WorkOrderNumber>
+		<SKU>DRY-STD-D1</SKU>
+		<TargetQuantity>50</TargetQuantity>
+		<CompletedQuantity>30</CompletedQuantity>
+		<WorkCenterId>Line-03-Dryers</WorkCenterId>
+		<Priority>Medium</Priority>
+		<Status>Released</Status>
+		<PlannedStartTime>2026-07-26T07:00:00</PlannedStartTime>
+		<PlannedEndTime>2026-07-26T15:00:00</PlannedEndTime>
+		<HasException>false</HasException>
+		<ExceptionMessage></ExceptionMessage>
+	</WorkOrder>
+	<WorkOrder>
+		<WorkOrderNumber>PO-2026-104</WorkOrderNumber>
+		<SKU>WASH-ECO-B1</SKU>
+		<TargetQuantity>200</TargetQuantity>
+		<CompletedQuantity>12</CompletedQuantity>
+		<WorkCenterId>Line-01-Main</WorkCenterId>
+		<Priority>Low</Priority>
+		<Status>On Hold</Status>
+		<PlannedStartTime>2026-07-26T12:00:00</PlannedStartTime>
+		<PlannedEndTime>2026-07-26T20:00:00</PlannedEndTime>
+		<HasException>true</HasException>
+		<ExceptionMessage>Manual Hold: Calibration Check Pending</ExceptionMessage>
+	</WorkOrder>
+	<WorkOrder>
+		<WorkOrderNumber>PO-2026-105</WorkOrderNumber>
+		<SKU>WASH-IND-MAX</SKU>
+		<TargetQuantity>30</TargetQuantity>
+		<CompletedQuantity>0</CompletedQuantity>
+		<WorkCenterId>Line-04-Heavy</WorkCenterId>
+		<Priority>High</Priority>
+		<Status>Unreleased</Status>
+		<PlannedStartTime>2026-07-27T08:00:00</PlannedStartTime>
+		<PlannedEndTime>2026-07-27T17:00:00</PlannedEndTime>
+		<HasException>false</HasException>
+		<ExceptionMessage></ExceptionMessage>
+	</WorkOrder>
+</ProductionOrders>
