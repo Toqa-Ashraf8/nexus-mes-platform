@@ -14,31 +14,25 @@ public class WorkOrderService : IWorkOrderService
 
         var query = from wo in _context.WorkOrders.AsNoTracking()
                     join pm in _context.ProductMasters.AsNoTracking() on wo.SKU equals pm.SKU
+                    join wc in _context.WorkCenters.AsNoTracking() on wo.WorkCenterId equals wc.WorkCenterId 
                     where pm.DefinitionStatus == "Released"
                        && (wo.Status == "Unreleased" || wo.Status == "On Hold")
                     select new WorkOrderListDto
                     {
+                        WorkOrderNumber=wo.WorkOrderNumber,
                         WorkOrderID = wo.Id,
                         SKU = wo.SKU,
                         TargetQuantity = wo.TargetQuantity,
+                        CompletedQuantity=wo.CompletedQuantity,
                         Priority = wo.Priority,
+                        WorkCenterName = wc != null ? wc.WorkCenterName : "Not Assigned",
                         PlannedStartTime = wo.PlannedStartTime,
+                        PlannedEndTime=wo.PlannedEndTime,
                         Status = wo.Status,
+                        HasException=wo.HasException,
+                        ExceptionMessage=wo.ExceptionMessage,
                         ProductDefinitionStatus = pm.DefinitionStatus
                     };
-
-        if (queryParams.SortBy?.ToLower() == "priority")
-        {
-            query = queryParams.SortDirection?.ToUpper() == "DESC"
-                ? query.OrderByDescending(w => w.Priority == "High" ? 1 : w.Priority == "Medium" ? 2 : 3)
-                       .ThenByDescending(w => w.PlannedStartTime)
-                : query.OrderBy(w => w.Priority == "High" ? 1 : w.Priority == "Medium" ? 2 : 3)
-                       .ThenBy(w => w.PlannedStartTime);
-        }
-        else
-        {
-            query = query.OrderBy(w => w.PlannedStartTime);
-        }
 
         int totalCount = await query.CountAsync();
 

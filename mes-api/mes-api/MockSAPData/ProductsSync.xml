@@ -1,11 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ProductDefinitions>
-	<!-- 1. غسالة موديل A - مسار كامل مع BOM -->
 	<ProductDefinition>
 		<SKU>WASH-MOD-A</SKU>
 		<Description>Standard Washing Machine - Full Route</Description>
 		<Version>1.0</Version>
-		<!-- الخطوة 1: كبس الهيكل -->
 		<ProductSegment>
 			<SequenceNo>10</SequenceNo>
 			<SequenceName>Cabinet Stamping</SequenceName>
@@ -25,7 +23,6 @@
 				<UnitOfMeasure>kN</UnitOfMeasure>
 			</Parameter>
 		</ProductSegment>
-		<!-- الخطوة 2: لحام الحلة -->
 		<ProductSegment>
 			<SequenceNo>20</SequenceNo>
 			<SequenceName>Drum Welding</SequenceName>
@@ -46,7 +43,6 @@
 				<UnitOfMeasure>KG</UnitOfMeasure>
 			</MaterialRequirement>
 		</ProductSegment>
-		<!-- الخطوة 3: التجميع اليدوي للموتور -->
 		<ProductSegment>
 			<SequenceNo>30</SequenceNo>
 			<SequenceName>Motor Mounting</SequenceName>
@@ -71,7 +67,6 @@
 				<UnitOfMeasure>PCS</UnitOfMeasure>
 			</MaterialRequirement>
 		</ProductSegment>
-		<!-- الخطوة 4: الفحص النهائي -->
 		<ProductSegment>
 			<SequenceNo>40</SequenceNo>
 			<SequenceName>Final Quality Audit</SequenceName>
@@ -86,8 +81,6 @@
 			</Parameter>
 		</ProductSegment>
 	</ProductDefinition>
-
-	<!-- 2. غسالة سمارت X1 - مسار تقني معقد مع BOM إلكترونيات -->
 	<ProductDefinition>
 		<SKU>WASH-SMART-X1</SKU>
 		<Description>Smart Connect Washing Machine</Description>
@@ -145,8 +138,6 @@
 			</EquipmentRequirement>
 		</ProductSegment>
 	</ProductDefinition>
-
-	<!-- 3. مجفف D1 - خطوات حرارية مضافة للـ BOM -->
 	<ProductDefinition>
 		<SKU>DRY-STD-D1</SKU>
 		<Description>Electric Clothes Dryer</Description>
@@ -187,7 +178,6 @@
 		</ProductSegment>
 	</ProductDefinition>
 
-	<!-- 4. غسالة اقتصادية B1 - مسار سريع مع خامات بيسك -->
 	<ProductDefinition>
 		<SKU>WASH-ECO-B1</SKU>
 		<Description>Eco Washer</Description>
@@ -228,7 +218,6 @@
 		</ProductSegment>
 	</ProductDefinition>
 
-	<!-- 5. غسالة صناعية MAX - خطوات الخدمة الشاقة وخامات ثقيلة -->
 	<ProductDefinition>
 		<SKU>WASH-IND-MAX</SKU>
 		<Description>Industrial High-Capacity Washer</Description>

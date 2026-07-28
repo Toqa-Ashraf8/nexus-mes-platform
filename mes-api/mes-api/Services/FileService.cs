@@ -1,11 +1,11 @@
 ﻿
-    public class FileService : IFileService
+public class FileService : IFileService
+{
+    private readonly IWebHostEnvironment _env;
+    public FileService(IWebHostEnvironment env)
     {
-         private readonly IWebHostEnvironment _env;
-        public FileService(IWebHostEnvironment env)
-        {
-            _env = env;
-        }
+        _env = env;
+    }
     public async Task<string> UploadImages(IFormFile file, string folderName)
     {
         if (file == null || file.Length == 0)
@@ -29,57 +29,34 @@
 
         return fileName;
     }
+
     public async Task<string> UploadVideos(IFormFile file, string folderName)
     {
         if (file == null || file.Length == 0)
             throw new ArgumentException("File is empty or null.");
 
-        string videoName = file.FileName;
+        string originalFileName = Path.GetFileName(file.FileName);
+        string extension = Path.GetExtension(originalFileName);
+        string uniqueVideoName = $"{Guid.NewGuid()}_{DateTime.UtcNow.Ticks}{extension}";
 
-        var targetDirectory = Path.Combine(_env.ContentRootPath, "Videos", folderName);
+        var targetDirectory = Path.Combine(_env.ContentRootPath, "Videos", folderName ?? "Default");
 
         if (!Directory.Exists(targetDirectory))
         {
             Directory.CreateDirectory(targetDirectory);
         }
 
-        var physicalPath = Path.Combine(targetDirectory, videoName);
+        var physicalPath = Path.Combine(targetDirectory, uniqueVideoName);
 
-        using (var stream = new FileStream(physicalPath, FileMode.Create, FileAccess.Write))
+        using (var stream = new FileStream(physicalPath, FileMode.Create, FileAccess.Write, FileShare.None))
         {
             await file.CopyToAsync(stream);
         }
 
-        return videoName;
-
+        return uniqueVideoName;
     }
-    //public async Task<string> UploadMediaFile(IFormFile file, string mediaTypeFolder, string subFolder)
-    //{
-    //    if (file == null || file.Length == 0)
-    //        throw new ArgumentException("File is empty or null.");
-
-    //    string fileExtension = Path.GetExtension(file.FileName);
-    //    string uniqueFileName = $"{Guid.NewGuid()}_{DateTime.UtcNow.Ticks}{fileExtension}";
-
-    
-    //    string rootPath = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
-
-    //    var targetDirectory = Path.Combine(rootPath, mediaTypeFolder, subFolder);
-
-    //    if (!Directory.Exists(targetDirectory))
-    //    {
-    //        Directory.CreateDirectory(targetDirectory);
-    //    }
-
-    //    var physicalPath = Path.Combine(targetDirectory, uniqueFileName);
-
-    //    using (var stream = new FileStream(physicalPath, FileMode.Create, FileAccess.Write))
-    //    {
-    //        await file.CopyToAsync(stream);
-    //    }
-
-    //    return uniqueFileName;
-    //}
 
 }
+
+
 

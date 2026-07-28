@@ -1,123 +1,107 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FiPlay,
   FiPauseCircle,
   FiAlertTriangle,
-  FiRefreshCw,
   FiClock,
   FiLayers,
   FiZap,
   FiActivity,
   FiMapPin,
   FiPackage,
-  FiSearch
+  FiSearch,
+  FiChevronLeft,
+  FiChevronRight,
+  FiCheckCircle,
+  FiEdit,
+  FiX,
+  FiCheck,
+  FiCalendar,
+  FiPrinter,
+  FiRotateCcw
 } from 'react-icons/fi';
 import './DispatchList.css';
+import alertWarningImg from '../../../assets/warning.png';
+import orderPriorityImg from '../../../assets/task.png';
+import calendarImg from '../../../assets/calendar.png';
+import workStationImg from '../../../assets/oil-industry.png';
 
-// قائمة المحطات المتاحة في صالة الإنتاج
-const availableWorkstations = [
-  'Press-Station-01',
-  'Press-Station-02',
-  'Assembly-Line-01',
-  'Assembly-Line-02',
-  'Stamping-Station-04',
-  'CNC-Cell-01'
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchReleasedWorkOrders } from '../services/dispatchListService';
 
-const initialOrders = [
-  {
-    id: 'PO-2026-001',
-    sku: 'FG-WASHER-X1',
-    description: 'Front-Load Washer Chassis',
-    status: 'Unreleased',
-    hasException: true,
-    exceptionMsg: 'Material Shortage at Line A',
-    plannedStart: '08:00 AM',
-    plannedEnd: '04:00 PM',
-    targetQty: 100,
-    completedQty: 0,
-    priority: 'High',
-    workstation: 'Press-Station-01'
-  },
-  
-  {
-    id: 'PO-2026-004',
-    sku: 'FG-OVEN-K4',
-    description: 'Built-in Oven Control Panel',
-    status: 'On Hold',
-    hasException: true,
-    exceptionMsg: 'Tooling Calibration Error',
-    plannedStart: '01:00 PM',
-    plannedEnd: '09:00 PM',
-    targetQty: 80,
-    completedQty: 15,
-    priority: 'High',
-    workstation: 'CNC-Cell-01'
-  }
-];
+ import {
+  setPageNumber,
+  setActiveTab,
+  setSearchQuery,
+  setSelectedWorkstation,
+  setSelectedPriority,
+  setDateSortOrder,
+  resetFilters,
+  releaseWorkOrder,
+  toggleHoldWorkOrder,
+  saveEditedOrder
+} from '../slices/dispatchListSlice';
 
 const DispatchList = () => {
-  const [orders, setOrders] = useState(initialOrders);
-  const [activeFilter, setActiveFilter] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const dispatch = useDispatch();
+  const {
+    workOrders,
+    totalCount,
+    totalPages,
+    pageNumber,
+    pageSize,
+    activeTab,
+    searchQuery,
+    selectedWorkstation,
+    selectedPriority,
+    dateSortOrder,
+    loading
+  } = useSelector((state) => state.dispatchList);
 
-  const stats = {
-    total: orders.length,
-    unreleased: orders.filter((o) => o.status === 'Unreleased').length,
-    released: orders.filter((o) => o.status === 'Released').length,
-    exceptions: orders.filter((o) => o.hasException).length
-  };
+  const [editingOrder, setEditingOrder] = useState(null);
 
-  const handleRelease = (id) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === id ? { ...order, status: 'Released' } : order
-      )
-    );
-  };
-
-  const handleToggleHold = (id) => {
-    setOrders((prev) =>
-      prev.map((order) => {
-        if (order.id === id) {
-          const nextStatus = order.status === 'On Hold' ? 'Unreleased' : 'On Hold';
-          return { ...order, status: nextStatus };
-        }
-        return order;
+  useEffect(() => {
+    dispatch(
+      fetchReleasedWorkOrders({
+        pageNumber,
+        pageSize,
+        searchQuery,
+        workstation: selectedWorkstation,
+        priority: selectedPriority
       })
     );
+  }, [dispatch, pageNumber, pageSize, searchQuery, selectedWorkstation, selectedPriority]);
+
+  const stats = {
+    total: totalCount || workOrders.length,
+    pending: workOrders.filter((o) => o.status === 'Unreleased').length,
+    released: workOrders.filter((o) => o.status === 'Released').length,
+    exceptions: workOrders.filter((o) => o.hasException).length
   };
 
-  const handleWorkstationChange = (id, newWorkstation) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === id ? { ...order, workstation: newWorkstation } : order
-      )
-    );
+  const handleRelease = (workOrderID) => {
+    dispatch(releaseWorkOrder(workOrderID));
   };
 
-  const handleFetchSAP = () => {
-    setIsRefreshing(true);
-    setTimeout(() => {
-      setIsRefreshing(false);
-    }, 800);
+  const handleToggleHold = (workOrderID) => {
+    dispatch(toggleHoldWorkOrder(workOrderID));
   };
 
-  const filteredOrders = orders.filter((order) => {
-    let matchesFilter = true;
-    if (activeFilter === 'Pending release') matchesFilter = order.status === 'Unreleased';
-    else if (activeFilter === 'Released') matchesFilter = order.status === 'Released';
-    else if (activeFilter === 'Exceptions') matchesFilter = order.hasException;
+  const handleOpenEditModal = (order) => {
+    setEditingOrder({ ...order });
+  };
 
-    const matchesSearch =
-      order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.sku.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.workstation.toLowerCase().includes(searchQuery.toLowerCase());
+  const handleSaveEdit = (e) => {
+    e.preventDefault();
+    if (editingOrder) {
+      dispatch(saveEditedOrder(editingOrder));
+      setEditingOrder(null);
+    }
+  };
 
-    return matchesFilter && matchesSearch;
-  });
+  const handleReset = () => {
+    dispatch(resetFilters());
+  };
 
   return (
     <div className="dispatch-page">
@@ -128,193 +112,259 @@ const DispatchList = () => {
           </div>
           <div>
             <h1>Production Dispatch Center</h1>
-            <p>Real-time operations queue &amp; order scheduling</p>
+            <p>Real-time SAP Work Orders &amp; Supervisory Control</p>
           </div>
         </div>
 
         <div className="dispatch-header-right">
           <div className="live-status-pill">
-            <span className="pulse-dot"></span> SAP sync connected
+            <span className="pulse-dot"></span>
+            <span>MES LIVE CONNECTED</span>
           </div>
-          <button className="btn-fetch-sap" onClick={handleFetchSAP} disabled={isRefreshing}>
-            <FiRefreshCw className={isRefreshing ? 'spin' : ''} />
-            {isRefreshing ? 'Syncing...' : 'Fetch SAP orders'}
+          <button className="btn-action-top" onClick={() => window.print()} title="Print Dispatch Sheet">
+            <FiPrinter /> Print Sheet
           </button>
         </div>
       </header>
 
       <div className="kpi-row">
         <div className="kpi-card">
-          <div className="kpi-top">
-            <span>Total orders</span>
-            <FiLayers className="kpi-icon" />
-          </div>
+          <div className="kpi-top"><span>Total Orders</span><FiLayers className="kpi-icon" /></div>
           <div className="kpi-value">{stats.total}</div>
-          <span className="kpi-caption">Today's work queue</span>
+          <span className="kpi-caption">Today's active queue</span>
         </div>
-
         <div className="kpi-card">
-          <div className="kpi-top">
-            <span>Pending release</span>
-            <FiClock className="kpi-icon" />
-          </div>
-          <div className="kpi-value">{stats.unreleased}</div>
-          <span className="kpi-caption">Waiting for dispatch</span>
+          <div className="kpi-top"><span>Pending Release</span><FiClock className="kpi-icon" /></div>
+          <div className="kpi-value">{stats.pending}</div>
+          <span className="kpi-caption">Ready for shop floor</span>
         </div>
-
         <div className="kpi-card">
-          <div className="kpi-top">
-            <span>Released</span>
-            <FiZap className="kpi-icon" />
-          </div>
+          <div className="kpi-top"><span>Dispatched / Active</span><FiZap className="kpi-icon" /></div>
           <div className="kpi-value">{stats.released}</div>
-          <span className="kpi-caption">Running on shop floor</span>
+          <span className="kpi-caption">Running on workstations</span>
         </div>
-
         <div className="kpi-card kpi-danger">
-          <div className="kpi-top">
-            <span>Exceptions</span>
-            <FiAlertTriangle className="kpi-icon" />
-          </div>
+          <div className="kpi-top"><span>Exceptions</span><FiAlertTriangle className="kpi-icon" /></div>
           <div className="kpi-value">{stats.exceptions}</div>
-          <span className="kpi-caption">Needs immediate action</span>
+          <span className="kpi-caption">Requires intervention</span>
         </div>
       </div>
 
-      <div className="filter-search-bar">
-        <div className="filter-pills-row">
-          {['All', 'Pending release', 'Released', 'Exceptions'].map((filterName) => (
-            <button
-              key={filterName}
-              className={`filter-pill ${activeFilter === filterName ? 'active' : ''}`}
-              onClick={() => setActiveFilter(filterName)}
-            >
-              {filterName === 'All' ? 'All orders' : filterName}
-            </button>
-          ))}
+      <div className="control-bar">
+        <div className="tab-group">
+          <button
+            className={`tab-btn ${activeTab === 'Pending' ? 'active' : ''}`}
+            onClick={() => dispatch(setActiveTab('Pending'))}
+          >
+            Pending Release ({stats.pending})
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'Released' ? 'active' : ''}`}
+            onClick={() => dispatch(setActiveTab('Released'))}
+          >
+            Released / Active ({stats.released})
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'All' ? 'active' : ''}`}
+            onClick={() => dispatch(setActiveTab('All'))}
+          >
+            All Orders ({stats.total})
+          </button>
         </div>
-
         <div className="search-box">
           <FiSearch className="search-icon" />
           <input
             type="text"
             placeholder="Search Order, SKU, Workstation..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => dispatch(setSearchQuery(e.target.value))}
           />
         </div>
       </div>
 
+      <div className="filters-toolbar">
+        <div className="filter-item">
+          <span className="filter-label">
+            <span><img src={workStationImg} alt="" width={15} height={15} /></span> Workstation Line:
+          </span>
+          <select
+            value={selectedWorkstation}
+            onChange={(e) => dispatch(setSelectedWorkstation(e.target.value))}
+            className="filter-select"
+          >
+            <option value="ALL">All Workstations</option>
+          </select>
+        </div>
+
+        <div className="filter-item">
+          <span className="filter-label">
+            <span><img src={orderPriorityImg} alt="" width={15} height={15} /></span> Priority:
+          </span>
+          <select
+            value={selectedPriority}
+            onChange={(e) => dispatch(setSelectedPriority(e.target.value))}
+            className="filter-select"
+          >
+            <option value="ALL">All Priorities</option>
+            <option value="High">High Priority</option>
+            <option value="Medium">Medium Priority</option>
+            <option value="Low">Low Priority</option>
+          </select>
+        </div>
+
+        <div className="filter-item">
+          <span className="filter-label">
+            <span><img src={calendarImg} alt="" width={15} height={15} /></span> Date Sort:
+          </span>
+          <button
+            className="btn-filter-toggle"
+            onClick={() => dispatch(setDateSortOrder(dateSortOrder === 'ASC' ? 'DESC' : 'ASC'))}
+            title="Toggle Schedule Order"
+          >
+            {dateSortOrder === 'ASC' ? 'Earliest' : 'Latest'}
+          </button>
+        </div>
+
+        {(selectedWorkstation !== 'ALL' || selectedPriority !== 'ALL' || searchQuery !== '' || dateSortOrder !== 'ASC') && (
+          <button className="btn-reset-filters" onClick={handleReset} title="Reset all filters">
+            <FiRotateCcw /> Reset Filters
+          </button>
+        )}
+      </div>
+
       <div className="orders-queue">
-        {filteredOrders.length === 0 ? (
+        {loading ? (
+          <div className="empty-state"><p>Loading work orders </p></div>
+        ) : workOrders.length === 0 ? (
           <div className="empty-state">
-            <p>No production orders match the current filter criteria.</p>
+            <p>No production orders match the selected criteria.</p>
+            <button className="btn-reset-filters" style={{ margin: '10px auto 0 auto' }} onClick={handleReset}>
+              Clear Active Filters
+            </button>
           </div>
         ) : (
-          filteredOrders.map((order) => {
-            const progressPercent = Math.round((order.completedQty / order.targetQty) * 100);
+          workOrders.map((order) => {
+            const progressPercent = Math.round((order.CompletedQuantity / order.TargetQuantity) * 100) || 0;
 
             return (
               <div
-                key={order.id}
-                className={`order-card priority-${order.priority.toLowerCase()} ${
-                  order.hasException ? 'has-exception' : ''
+                key={order.WorkOrderNumber}
+                className={`order-card priority-${order.Priority?.toLowerCase()} ${
+                  order.HasException ? 'has-exception' : ''
                 }`}
               >
+                {order.HasException && (
+                  <div className="order-alert-sidebanner">
+                    {order.alertImage ? (
+                      <img src={order.alertImage} alt="Exception Alert" className="alert-custom-img" />
+                    ) : (
+                      <div className="alert-banner-content">
+                        <FiAlertTriangle className="alert-banner-icon" />
+                        <span className="alert-banner-text">ALERT</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div className="order-card-main">
                   <div className="order-identity">
                     <div className="order-id-row">
-                      <span className="order-id">{order.id}</span>
-                      <span className={`priority-tag ${order.priority.toLowerCase()}`}>
-                        {order.priority}
+                      <span className="order-id">{order.WorkOrderNumber}</span>
+                      <span className={`priority-tag ${order.Priority?.toLowerCase()}`}>
+                        {order.Priority}
                       </span>
                     </div>
                     <div className="order-sku-row">
                       <FiPackage className="inline-icon" />
-                      <span className="sku-code">{order.sku}</span>
-                      <span className="sku-desc">- {order.description}</span>
+                      <span className="sku-code">{order.SKU}</span>
                     </div>
-                    {order.hasException && (
+                    {order.HasException===true && (
                       <div className="exception-note">
-                        <FiAlertTriangle /> {order.exceptionMsg}
+                        <FiAlertTriangle /> {order.ExceptionMessage}
                       </div>
                     )}
                   </div>
 
                   <div className="order-progress-block">
                     <div className="progress-label-row">
-                      <span>{order.completedQty} / {order.targetQty} units</span>
+                      <span>{order.CompletedQuantity} / {order.TargetQuantity} units</span>
                       <span className="progress-percent">{progressPercent}%</span>
                     </div>
                     <div className="progress-track">
                       <div
-                        className={`progress-fill ${order.hasException ? 'fill-danger' : ''}`}
+                        className={`progress-fill ${order.HasException ? 'fill-danger' : ''}`}
                         style={{ width: `${progressPercent}%` }}
                       ></div>
                     </div>
                   </div>
 
-                  <div className="order-meta-block">
-                    <div className="meta-item">
-                      <FiClock className="inline-icon" />
-                      <span>{order.plannedStart} &rarr; {order.plannedEnd}</span>
+                  <div className="order-schedule-grid">
+                    <div className="schedule-badge">
+                      <FiClock className="sched-icon" />
+                      <div className="sched-info">
+                        <span className="sched-label">Start Time</span>
+                        <span className="sched-value">{order.PlannedStartTime.replace('T', ' - ')}</span>
+                      </div>
                     </div>
-                    
-                    <div className="meta-item workstation-select-wrapper">
-                      <FiMapPin className="inline-icon" />
-                      {order.status === 'Unreleased' ? (
-                        <select
-                          className="workstation-select"
-                          value={order.workstation}
-                          onChange={(e) => handleWorkstationChange(order.id, e.target.value)}
-                          title="Change workstation / re-route"
-                        >
-                          {availableWorkstations.map((ws) => (
-                            <option key={ws} value={ws}>
-                              {ws}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <span className="workstation-readonly">{order.workstation}</span>
-                      )}
+                    <div className="schedule-badge">
+                      <FiCalendar className="sched-icon" />
+                      <div className="sched-info">
+                        <span className="sched-label">End Time</span>
+                        <span className="sched-value">{order.PlannedEndTime.replace('T', ' - ')}</span>
+                      </div>
+                    </div>
+                    <div className="schedule-badge workstation">
+                      <FiMapPin className="sched-icon" />
+                      <div className="sched-info">
+                        <span className="sched-label">Workstation</span>
+                        <span className="sched-value-ws">{order.WorkCenterName}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 <div className="order-card-side">
-                  <span className={`status-badge ${order.status.toLowerCase().replace(' ', '-')}`}>
-                    {order.status}
+                  <span className={`status-badge ${order.Status?.toLowerCase().replace(' ', '-')}`}>
+                    {order.Status}
                   </span>
-
                   <div className="order-actions">
-                    {order.status !== 'Released' ? (
+                    {order.Status !== 'Released' ? (
                       <button
                         className="btn-release"
-                        onClick={() => handleRelease(order.id)}
-                        disabled={order.hasException || order.status === 'On Hold'}
+                        onClick={() => handleRelease(order.WorkOrderID)}
+                        disabled={order.HasException || order.Status === 'On Hold'}
                         title={
-                          order.hasException
-                            ? 'Cannot release order with active exceptions'
-                            : order.status === 'On Hold'
-                            ? 'Resume order before release'
-                            : 'Release to shop floor'
+                          order.HasException
+                            ? 'Cannot release with active exception'
+                            : order.Status === 'On Hold'
+                            ? 'Resume order before releasing'
+                            : 'Release to WinForms Operator Terminal'
                         }
                       >
                         <FiPlay /> Release
                       </button>
                     ) : (
                       <button className="btn-dispatched" disabled>
-                        Dispatched
+                        <FiCheckCircle /> Dispatched
                       </button>
                     )}
+
                     <button
-                      className={`btn-hold-icon ${order.status === 'On Hold' ? 'is-on-hold' : ''}`}
-                      onClick={() => handleToggleHold(order.id)}
-                      title={order.status === 'On Hold' ? 'Resume order' : 'Place order on hold'}
+                      className={`btn-hold-icon ${order.Status === 'On Hold' ? 'is-on-hold' : ''}`}
+                      onClick={() => handleToggleHold(order.WorkOrderID)}
+                      title={order.Status === 'On Hold' ? 'Resume order' : 'Place order on hold'}
                     >
                       <FiPauseCircle />
                     </button>
+                    {order.Status !== 'Released' && (
+                      <button
+                        className="btn-edit-icon"
+                        onClick={() => handleOpenEditModal(order)}
+                        title="Edit Order Parameters (Target Qty, Priority, Line, Schedule)"
+                      >
+                        <FiEdit />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -322,6 +372,121 @@ const DispatchList = () => {
           })
         )}
       </div>
+
+      <div className="pagination-footer">
+        <div className="pagination-info">
+          Showing <strong>{workOrders.length}</strong> of <strong>{totalCount}</strong> orders
+        </div>
+        <div className="pagination-controls">
+          <button
+            className="page-btn"
+            disabled={pageNumber === 1}
+            onClick={() => dispatch(setPageNumber(Math.max(pageNumber - 1, 1)))}
+          >
+            <FiChevronLeft /> Previous
+          </button>
+          <span className="page-indicator">Page {pageNumber} of {totalPages}</span>
+          <button
+            className="page-btn"
+            disabled={pageNumber >= totalPages}
+            onClick={() => dispatch(setPageNumber(Math.min(pageNumber + 1, totalPages)))}
+          >
+            Next <FiChevronRight />
+          </button>
+        </div>
+      </div>
+
+     {/*  {editingOrder && (
+        <div className="modal-overlay">
+          <div className="modal-container">
+            <div className="modal-header">
+              <h3>Edit Order Parameters: <span>{editingOrder.id}</span></h3>
+              <button className="btn-close" onClick={() => setEditingOrder(null)}>
+                <FiX />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} className="modal-body">
+              <div className="form-group">
+                <label>SKU &amp; Material Description</label>
+                <input
+                  type="text"
+                  value={`${editingOrder.sku} - ${editingOrder.description}`}
+                  disabled
+                  className="input-disabled"
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Target Quantity (Units)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={editingOrder.targetQty}
+                    onChange={(e) =>
+                      setEditingOrder({ ...editingOrder, targetQty: parseInt(e.target.value) || 0 })
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Priority Level</label>
+                  <select
+                    value={editingOrder.priority}
+                    onChange={(e) => setEditingOrder({ ...editingOrder, priority: e.target.value })}
+                  >
+                    <option value="High">High Priority</option>
+                    <option value="Medium">Medium Priority</option>
+                    <option value="Low">Low Priority</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Assigned Workstation (Routing)</label>
+                <select
+                  value={editingOrder.workstation}
+                  onChange={(e) => setEditingOrder({ ...editingOrder, workstation: e.target.value })}
+                >
+                </select>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Planned Start Time</label>
+                  <input
+                    type="text"
+                    value={editingOrder.plannedStart}
+                    onChange={(e) => setEditingOrder({ ...editingOrder, plannedStart: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Planned End Time</label>
+                  <input
+                    type="text"
+                    value={editingOrder.plannedEnd}
+                    onChange={(e) => setEditingOrder({ ...editingOrder, plannedEnd: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button type="button" className="btn-cancel" onClick={() => setEditingOrder(null)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn-save">
+                  <FiCheck /> Save Order Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )} */}
     </div>
   );
 };

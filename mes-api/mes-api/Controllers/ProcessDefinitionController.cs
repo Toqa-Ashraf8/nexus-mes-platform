@@ -50,22 +50,27 @@ namespace mes_api.Controllers
             var filename = await _fileService.UploadImages(file, Folder);
             return Ok(filename) ;
         }
+       
         [Route("UploadVideos")]
         [HttpPost]
-        [RequestSizeLimit(100 * 1024 * 1024)] 
-        public async Task<IActionResult> UploadVideos(IFormFile file,string Folder)
+        [RequestSizeLimit(100 * 1024 * 1024)]
+        public async Task<IActionResult> UploadVideos(IFormFile file, [FromQuery] string Folder)
         {
             if (file == null || file.Length == 0)
-                return BadRequest(new { message = "No video uploaded" });
+                return BadRequest(new { message = "No file uploaded" });
 
-            var allowedExtensions = new[] { ".mp4", ".mov", ".avi", ".mkv", ".webm" };
+            var allowedExtensions = new[] { ".mp4", ".mov", ".avi", ".mkv", ".webm", ".gif" };
             var extension = Path.GetExtension(file.FileName).ToLower();
 
             if (!allowedExtensions.Contains(extension))
-                return BadRequest(new { message = "Only video files (.mp4, .mov, .avi, .mkv, .webm) are allowed." });
+                return BadRequest(new { message = "Only allowed extensions are (.mp4, .mov, .avi, .mkv, .webm, .gif)" });
+
+            var allowedMimeTypes = new[] { "video/mp4", "video/quicktime", "video/x-msvideo", "image/gif" };
+            if (!allowedMimeTypes.Contains(file.ContentType.ToLower()))
+                return BadRequest(new { message = "Invalid file type / Content-Type." });
 
             var filename = await _fileService.UploadVideos(file, Folder);
-            return Ok(filename);
+            return Ok( filename);
         }
     }
 }
