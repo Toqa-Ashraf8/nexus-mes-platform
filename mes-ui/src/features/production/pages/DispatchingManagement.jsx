@@ -13,7 +13,6 @@ import {
 } from 'react-icons/fi';
 import './DispatchingManagement.css';
 
-// بيانات وهمية بس للعرض - مفيش أي state ولا functions هنا
 const dummyOrders = [
   {
     id: 'PO-2026-001',
@@ -29,46 +28,6 @@ const dummyOrders = [
     priority: 'High',
     workstation: 'Press-Station-01'
   },
-  {
-    id: 'PO-2026-002',
-    sku: 'FG-OVEN-V2',
-    description: 'Industrial Oven Panel Assembly',
-    status: 'Released',
-    hasException: false,
-    plannedStart: '10:00 AM',
-    plannedEnd: '02:00 PM',
-    targetQty: 50,
-    completedQty: 32,
-    priority: 'Medium',
-    workstation: 'Assembly-Line-02'
-  },
-  {
-    id: 'PO-2026-003',
-    sku: 'FG-DRYER-S3',
-    description: 'Compact Dryer Drum Unit',
-    status: 'Unreleased',
-    hasException: false,
-    plannedStart: '01:00 PM',
-    plannedEnd: '06:00 PM',
-    targetQty: 30,
-    completedQty: 0,
-    priority: 'Low',
-    workstation: 'Testing-Station-01'
-  },
-  {
-    id: 'PO-2026-004',
-    sku: 'FG-MIXER-T7',
-    description: 'Commercial Mixer Base Frame',
-    status: 'On Hold',
-    hasException: true,
-    exceptionMsg: 'Equipment Calibration Pending',
-    plannedStart: '09:00 AM',
-    plannedEnd: '05:00 PM',
-    targetQty: 75,
-    completedQty: 12,
-    priority: 'High',
-    workstation: 'CNC-Station-03'
-  }
 ];
 
 const stats = {
@@ -81,7 +40,6 @@ const stats = {
 const DispatchingManagement = () => {
   return (
     <div className="dispatch-page">
-      {/* Header */}
       <header className="dispatch-header">
         <div className="dispatch-header-left">
           <div className="dispatch-header-icon">
@@ -102,8 +60,6 @@ const DispatchingManagement = () => {
           </button>
         </div>
       </header>
-
-      {/* KPI Cards */}
       <div className="kpi-row">
         <div className="kpi-card">
           <div className="kpi-top">
@@ -142,7 +98,6 @@ const DispatchingManagement = () => {
         </div>
       </div>
 
-      {/* Filter Pills (visual only) */}
       <div className="filter-pills-row">
         <span className="filter-pill active">All orders</span>
         <span className="filter-pill">Pending release</span>
@@ -150,7 +105,6 @@ const DispatchingManagement = () => {
         <span className="filter-pill">Exceptions</span>
       </div>
 
-      {/* Orders Queue - Card List instead of table */}
       <div className="orders-queue">
         {dummyOrders.map((order) => (
           <div

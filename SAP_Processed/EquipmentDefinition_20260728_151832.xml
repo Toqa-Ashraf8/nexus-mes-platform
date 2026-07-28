@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EquipmentDefinition>
+    <Equipment>
+        <WorkCenterName>Line-01-Main</WorkCenterName>
+        <Description>Main Assembly Line 01 - Standard Washers</Description>
+        <EquipmentClassName>Production-Line</EquipmentClassName>
+        <EquipmentProperty>
+            <ID>Department</ID>
+            <Value>General Assembly</Value>
+        </EquipmentProperty>
+    </Equipment>
+    <Equipment>
+        <WorkCenterName>Line-02-Smart</WorkCenterName>
+        <Description>Smart Appliances Assembly Line - High Tech</Description>
+        <EquipmentClassName>Production-Line</EquipmentClassName>
+        <EquipmentProperty>
+            <ID>Department</ID>
+            <Value>Electronics &amp; Smart Integration</Value>
+        </EquipmentProperty>
+    </Equipment>
+    <Equipment>
+        <WorkCenterName>Line-03-Dryers</WorkCenterName>
+        <Description>Electric Clothes Dryer Production Line</Description>
+        <EquipmentClassName>Production-Line</EquipmentClassName>
+        <EquipmentProperty>
+            <ID>Department</ID>
+            <Value>Thermal Systems</Value>
+        </EquipmentProperty>
+    </Equipment>
+    <Equipment>
+        <WorkCenterName>Line-04-Heavy</WorkCenterName>
+        <Description>Heavy Duty Industrial Washers Line</Description>
+        <EquipmentClassName>Production-Line</EquipmentClassName>
+        <EquipmentProperty>
+            <ID>Department</ID>
+            <Value>Industrial Machinery</Value>
+        </EquipmentProperty>
+    </Equipment>
+</EquipmentDefinition>

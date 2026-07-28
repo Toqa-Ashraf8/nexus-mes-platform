@@ -1,9 +1,11 @@
-﻿using System.IO;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 public class SapFolderMonitorService : BackgroundService
 {
@@ -31,16 +33,16 @@ public class SapFolderMonitorService : BackgroundService
             ? configuration["SapIntegrationSettings:ProcessedFolderPath"]
             : Path.Combine(Directory.GetCurrentDirectory(), "SAP_Processed");
 
- 
         Directory.CreateDirectory(_watchFolderPath);
         Directory.CreateDirectory(_processedFolderPath);
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         try
         {
             _logger.LogInformation("[SAP Integration] Monitoring started at: {Path}", _watchFolderPath);
+            await ProcessExistingFilesAsync();
 
             _watcher = new FileSystemWatcher(_watchFolderPath, "*.xml")
             {
@@ -54,14 +56,32 @@ public class SapFolderMonitorService : BackgroundService
         {
             _logger.LogError(ex, "Failed to start FileSystemWatcher at path: {Path}", _watchFolderPath);
         }
-
-        return Task.CompletedTask;
     }
 
     private async void OnNewXmlFileCreated(object sender, FileSystemEventArgs e)
     {
         _logger.LogInformation("[SAP Integration] New XML Detected: {FileName}", e.Name);
+        await ProcessSingleFile(e.FullPath);
+    }
 
+    private async Task ProcessExistingFilesAsync()
+    {
+        var existingFiles = Directory.GetFiles(_watchFolderPath, "*.xml");
+
+        if (existingFiles.Length > 0)
+        {
+            _logger.LogInformation("[SAP Integration] Found {Count} existing file(s) in Drop Box. Processing...", existingFiles.Length);
+
+            foreach (var filePath in existingFiles)
+            {
+                await ProcessSingleFile(filePath);
+            }
+        }
+    }
+
+    private async Task ProcessSingleFile(string filePath)
+    {
+        var fileName = Path.GetFileName(filePath);
         await Task.Delay(1000);
 
         try
@@ -69,20 +89,20 @@ public class SapFolderMonitorService : BackgroundService
             using (var scope = _scopeFactory.CreateScope())
             {
                 var xmlProcessor = scope.ServiceProvider.GetRequiredService<ISapXmlProcessorService>();
-
-                await xmlProcessor.ProcessAndRouteXml(e.FullPath);
+                await xmlProcessor.ProcessAndRouteXml(filePath);
             }
-            var destinationPath = Path.Combine(_processedFolderPath, $"{Path.GetFileNameWithoutExtension(e.Name)}_{DateTime.Now:yyyyMMdd_HHmmss}.xml");
 
-            if (File.Exists(e.FullPath))
+            var destinationPath = Path.Combine(_processedFolderPath, $"{Path.GetFileNameWithoutExtension(fileName)}_{DateTime.Now:yyyyMMdd_HHmmss}.xml");
+
+            if (File.Exists(filePath))
             {
-                File.Move(e.FullPath, destinationPath);
-                _logger.LogInformation("[SAP Integration] File processed and moved to SAP_Processed.");
+                File.Move(filePath, destinationPath);
+                _logger.LogInformation("[SAP Integration] File processed and moved to SAP_Processed: {FileName}", fileName);
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing SAP XML: {FileName}", e.Name);
+            _logger.LogError(ex, "Error processing SAP XML: {FileName}", fileName);
         }
     }
 

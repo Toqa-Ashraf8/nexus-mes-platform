@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace mes_api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260725091529_EnableCascadeDelete")]
-    partial class EnableCascadeDelete
+    [Migration("20260728121756_setinitialMigration")]
+    partial class setinitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,6 +69,7 @@ namespace mes_api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("Value")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("PlcParameterId");
@@ -189,6 +190,42 @@ namespace mes_api.Migrations
                     b.ToTable("SegmentBomItems");
                 });
 
+            modelBuilder.Entity("WorkCenter", b =>
+                {
+                    b.Property<int>("WorkCenterId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkCenterId"));
+
+                    b.Property<string>("Department")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EquipmentClassName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastSyncDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WorkCenterName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("WorkCenterId");
+
+                    b.ToTable("WorkCenters");
+                });
+
             modelBuilder.Entity("WorkInstructionStep", b =>
                 {
                     b.Property<int>("StepId")
@@ -223,6 +260,70 @@ namespace mes_api.Migrations
                     b.HasIndex("ProcessSegmentId");
 
                     b.ToTable("WorkInstructionSteps");
+                });
+
+            modelBuilder.Entity("WorkOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompletedQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExceptionMessage")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("HasException")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("PlannedEndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PlannedStartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("SKU")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("TargetQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WorkCenterId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WorkCenterName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WorkOrderNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkCenterId");
+
+                    b.ToTable("WorkOrders");
                 });
 
             modelBuilder.Entity("EquipmentRequirement", b =>
@@ -278,6 +379,15 @@ namespace mes_api.Migrations
                     b.Navigation("ProcessSegment");
                 });
 
+            modelBuilder.Entity("WorkOrder", b =>
+                {
+                    b.HasOne("WorkCenter", "WorkCenter")
+                        .WithMany("WorkOrders")
+                        .HasForeignKey("WorkCenterId");
+
+                    b.Navigation("WorkCenter");
+                });
+
             modelBuilder.Entity("ProcessSegment", b =>
                 {
                     b.Navigation("EquipmentRequirements");
@@ -294,6 +404,11 @@ namespace mes_api.Migrations
             modelBuilder.Entity("ProductMaster", b =>
                 {
                     b.Navigation("ProductSegments");
+                });
+
+            modelBuilder.Entity("WorkCenter", b =>
+                {
+                    b.Navigation("WorkOrders");
                 });
 #pragma warning restore 612, 618
         }

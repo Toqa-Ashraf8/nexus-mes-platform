@@ -29,6 +29,24 @@ namespace mes_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "WorkCenters",
+                columns: table => new
+                {
+                    WorkCenterId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WorkCenterName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EquipmentClassName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Department = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    LastSyncDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkCenters", x => x.WorkCenterId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProcessSegments",
                 columns: table => new
                 {
@@ -48,6 +66,36 @@ namespace mes_api.Migrations
                         principalTable: "ProductMasters",
                         principalColumn: "ProductMasterId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkOrders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WorkOrderNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    SKU = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    TargetQuantity = table.Column<int>(type: "int", nullable: false),
+                    CompletedQuantity = table.Column<int>(type: "int", nullable: false),
+                    WorkCenterName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WorkCenterId = table.Column<int>(type: "int", nullable: true),
+                    Priority = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    PlannedStartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PlannedEndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    HasException = table.Column<bool>(type: "bit", nullable: false),
+                    ExceptionMessage = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WorkOrders_WorkCenters_WorkCenterId",
+                        column: x => x.WorkCenterId,
+                        principalTable: "WorkCenters",
+                        principalColumn: "WorkCenterId");
                 });
 
             migrationBuilder.CreateTable(
@@ -97,7 +145,7 @@ namespace mes_api.Migrations
                     PlcParameterId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Tag = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Value = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Value = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
                     Tolerance = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     UnitOfMeasure = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProcessSegmentId = table.Column<int>(type: "int", nullable: true)
@@ -188,6 +236,11 @@ namespace mes_api.Migrations
                 name: "IX_WorkInstructionSteps_ProcessSegmentId",
                 table: "WorkInstructionSteps",
                 column: "ProcessSegmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkOrders_WorkCenterId",
+                table: "WorkOrders",
+                column: "WorkCenterId");
         }
 
         /// <inheritdoc />
@@ -209,7 +262,13 @@ namespace mes_api.Migrations
                 name: "WorkInstructionSteps");
 
             migrationBuilder.DropTable(
+                name: "WorkOrders");
+
+            migrationBuilder.DropTable(
                 name: "ProcessSegments");
+
+            migrationBuilder.DropTable(
+                name: "WorkCenters");
 
             migrationBuilder.DropTable(
                 name: "ProductMasters");

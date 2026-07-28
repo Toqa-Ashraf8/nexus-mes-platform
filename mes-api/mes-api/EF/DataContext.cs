@@ -12,6 +12,7 @@ public class DataContext : DbContext
     public DbSet<PLCParameter> PLCParameters { get; set; }
     public DbSet <WorkInstructionStep> WorkInstructionSteps { get; set; }
     public DbSet<WorkOrder> WorkOrders { get; set; }
+    public DbSet<WorkCenter> WorkCenters { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -37,5 +38,10 @@ public class DataContext : DbContext
             .WithMany(s => s.Parameters)
             .HasForeignKey(p => p.ProcessSegmentId)
             .OnDelete(DeleteBehavior.Cascade);
+       
+            modelBuilder.Entity<PLCParameter>()
+              .Property(p => p.Value)
+             .HasPrecision(18, 2);
+
     }
 }
