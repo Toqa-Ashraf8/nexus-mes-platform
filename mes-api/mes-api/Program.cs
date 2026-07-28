@@ -30,6 +30,7 @@ builder.Services.Configure<FormOptions>(options =>
 
 builder.Services.AddScoped<ISapSyncService, SapSyncService>();
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IWorkOrderService, WorkOrderService>();
 builder.Services.AddScoped<IProcessDefinitionRepository, ProcessDefinitionRepository>();
 builder.Services.AddHostedService<SapFolderMonitorService>();
 builder.Services.AddScoped<ISapXmlProcessorService, SapXmlProcessorService>();

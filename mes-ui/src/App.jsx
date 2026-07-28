@@ -2,11 +2,11 @@ import './App.css'
 import Navbar from './components/Navbar'
 import {Route , Routes} from 'react-router-dom'
 import ProcessDefinition from './features/production/pages/ProcessDefinition'
-import DispatchingManagement from './features/production/pages/DispatchingManagement'
 import {ToastContainer,toast} from 'react-toastify'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { clearGlobalError } from './app/uiSlice'
+import DispatchList from './features/production/pages/DispatchList'
 function App() {
   const { 
   isLoading, 
@@ -38,7 +38,7 @@ useEffect(() => {
       />
    <Navbar/>
    <Routes>
-    <Route path="/order-dispatching" element={<DispatchingManagement/>}/>
+    <Route path="/order-dispatching" element={<DispatchList/>}/>
     <Route path="/process-definition" element={<ProcessDefinition/>}/>  
    </Routes>
     </div>

@@ -32,8 +32,8 @@ const MODULES = [
     header: 'Production Management',
     colorClass: 'prod', 
     items: [
-      { to: '/order-dispatching', label: 'Dispatch List', icon: FiGrid },
       { to: '/process-definition', label: 'Route & Recipe Config', icon: FiLayers },
+      { to: '/order-dispatching', label: 'Dispatch List', icon: FiGrid },
       { to: '/wip-tracking', label: 'Live WIP Tracking', icon: FiActivity },
       { to: '/digitized-instructions', label: 'E-Work Instructions', icon: FiFileText },
     ],
