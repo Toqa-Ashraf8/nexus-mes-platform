@@ -5,7 +5,6 @@ using System.Reflection.Emit;
 public class DataContext : DbContext
 {
     public DataContext(DbContextOptions<DataContext> options) : base(options) { }
-
     public DbSet<ProductMaster> ProductMasters { get; set; }
     public DbSet<ProcessSegment> ProcessSegments { get; set; }
     public DbSet<SegmentBomItem> SegmentBomItems { get; set; }
@@ -13,6 +12,7 @@ public class DataContext : DbContext
     public DbSet <WorkInstructionStep> WorkInstructionSteps { get; set; }
     public DbSet<WorkOrder> WorkOrders { get; set; }
     public DbSet<WorkCenter> WorkCenters { get; set; }
+    public DbSet<PersonnelMaster> PersonnelMasters { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

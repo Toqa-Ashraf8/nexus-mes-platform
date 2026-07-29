@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<PersonnelDefinition>
+    <Person>
+        <ID>EMP-101</ID>
+        <Name>Ahmed Mansour</Name>
+        <PersonnelClassName>Line-Supervisor</PersonnelClassName>
+        <PersonnelProperty>
+            <ID>Qualification</ID>
+            <Value>Assembly-L1-Master</Value>
+        </PersonnelProperty>
+        <PersonnelProperty>
+            <ID>RFID_Tag</ID>
+            <Value>E200410123</Value>
+        </PersonnelProperty>
+    </Person>
+    <Person>
+        <ID>EMP-102</ID>
+        <Name>Sara El-Sayed</Name>
+        <PersonnelClassName>Junior-Operator</PersonnelClassName>
+        <PersonnelProperty>
+            <ID>Qualification</ID>
+            <Value>Basic-Wiring</Value>
+        </PersonnelProperty>
+        <PersonnelProperty>
+            <ID>RFID_Tag</ID>
+            <Value>E200410124</Value>
+        </PersonnelProperty>
+    </Person>
+    <Person>
+        <ID>EMP-103</ID>
+        <Name>Mohamed Ali</Name>
+        <PersonnelClassName>Quality-Inspector</PersonnelClassName>
+        <PersonnelProperty>
+            <ID>Qualification</ID>
+            <Value>Final-Test-Certified</Value>
+        </PersonnelProperty>
+        <PersonnelProperty>
+            <ID>RFID_Tag</ID>
+            <Value>E200410125</Value>
+        </PersonnelProperty>
+    </Person>
+    <Person>
+        <ID>EMP-104</ID>
+        <Name>Khaled Hassan</Name>
+        <PersonnelClassName>Maintenance-Tech</PersonnelClassName>
+        <PersonnelProperty>
+            <ID>Qualification</ID>
+            <Value>PLC-Troubleshooting</Value>
+        </PersonnelProperty>
+        <PersonnelProperty>
+            <ID>RFID_Tag</ID>
+            <Value>E200410126</Value>
+        </PersonnelProperty>
+    </Person>
+    <Person>
+        <ID>EMP-105</ID>
+        <Name>Mona Zaki</Name>
+        <PersonnelClassName>Packing-Operator</PersonnelClassName>
+        <PersonnelProperty>
+            <ID>Qualification</ID>
+            <Value>Packaging-Standard</Value>
+        </PersonnelProperty>
+        <PersonnelProperty>
+            <ID>RFID_Tag</ID>
+            <Value>E200410127</Value>
+        </PersonnelProperty>
+    </Person>
+    <Person>
+        <ID>EMP-106</ID>
+        <Name>Hany Adel</Name>
+        <PersonnelClassName>CNC-Operator</PersonnelClassName>
+        <PersonnelProperty>
+            <ID>Qualification</ID>
+            <Value>CNC-Level-2</Value>
+        </PersonnelProperty>
+        <PersonnelProperty>
+            <ID>RFID_Tag</ID>
+            <Value>E200410128</Value>
+        </PersonnelProperty>
+    </Person>
+    <Person>
+        <ID>EMP-107</ID>
+        <Name>Yassin Ibrahim</Name>
+        <PersonnelClassName>Safety-Tester</PersonnelClassName>
+        <PersonnelProperty>
+            <ID>Qualification</ID>
+            <Value>High-Voltage-Safety</Value>
+        </PersonnelProperty>
+        <PersonnelProperty>
+            <ID>RFID_Tag</ID>
+            <Value>E200410129</Value>
+        </PersonnelProperty>
+    </Person>
+    <Person>
+        <ID>EMP-108</ID>
+        <Name>Omar Farouk</Name>
+        <PersonnelClassName>Senior-Operator</PersonnelClassName>
+        <PersonnelProperty>
+            <ID>Qualification</ID>
+            <Value>Full-Assembly-Expert</Value>
+        </PersonnelProperty>
+        <PersonnelProperty>
+            <ID>RFID_Tag</ID>
+            <Value>E200410130</Value>
+        </PersonnelProperty>
+    </Person>
+    <Person>
+        <ID>EMP-109</ID>
+        <Name>Laila Mahmoud</Name>
+        <PersonnelClassName>Material-Handler</PersonnelClassName>
+        <PersonnelProperty>
+            <ID>Qualification</ID>
+            <Value>Forklift-Certified</Value>
+        </PersonnelProperty>
+        <PersonnelProperty>
+            <ID>RFID_Tag</ID>
+            <Value>E200410131</Value>
+        </PersonnelProperty>
+    </Person>
+    <Person>
+        <ID>EMP-110</ID>
+        <Name>Ziad Ahmed</Name>
+        <PersonnelClassName>Trainee</PersonnelClassName>
+        <PersonnelProperty>
+            <ID>Qualification</ID>
+            <Value>None</Value>
+        </PersonnelProperty>
+        <PersonnelProperty>
+            <ID>RFID_Tag</ID>
+            <Value>E200410132</Value>
+        </PersonnelProperty>
+    </Person>
+</PersonnelDefinition>

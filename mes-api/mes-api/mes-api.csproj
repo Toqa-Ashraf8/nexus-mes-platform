@@ -38,7 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Extensions\" />
     <Folder Include="Images\InstructionSteps\" />
     <Folder Include="Images\StepCategory\" />
     <Folder Include="Videos\InstructionSteps\" />

@@ -31,6 +31,11 @@ namespace NexusMesPlatform.Services
             {
                 await ProcessWorkCentersXml(xDoc);
             }
+            if (string.Equals(rootName, "PersonnelDefinition", StringComparison.OrdinalIgnoreCase) ||
+               xDoc.Descendants().Any(e => string.Equals(e.Name.LocalName, "Person", StringComparison.OrdinalIgnoreCase)))
+            {
+                await ProcessPersonnelXml(xDoc);
+            }
             else if (string.Equals(rootName, "ProductionOrders", StringComparison.OrdinalIgnoreCase) ||
                      string.Equals(rootName, "WorkOrders", StringComparison.OrdinalIgnoreCase) ||
                      xDoc.Descendants().Any(e => string.Equals(e.Name.LocalName, "WorkOrder", StringComparison.OrdinalIgnoreCase)))
@@ -202,6 +207,69 @@ namespace NexusMesPlatform.Services
 
             var rowsSaved = await _context.SaveChangesAsync();
             _logger.LogInformation("[SAP Integration] Successfully saved {Count} records to WorkOrders.", rowsSaved);
+        }
+
+        private async Task ProcessPersonnelXml(XDocument xDoc)
+        {
+            var personElements = xDoc.Descendants()
+                                     .Where(e => string.Equals(e.Name.LocalName, "Person", StringComparison.OrdinalIgnoreCase))
+                                     .ToList();
+
+            if (!personElements.Any())
+            {
+                _logger.LogWarning("No <Person> tags found in the Personnel XML file");
+                return;
+            }
+
+            foreach (var p in personElements)
+            {
+                var employeeId = GetElementValue(p, "ID");
+                var name = GetElementValue(p, "Name");
+                var personnelClassName = GetElementValue(p, "personnelClassName");
+                if (string.IsNullOrEmpty(employeeId)) continue;
+
+                var properties = p.Elements().Where(e => string.Equals(e.Name.LocalName, "PersonnelProperty", StringComparison.OrdinalIgnoreCase));
+
+                var qualification = properties
+                    .FirstOrDefault(prop => GetElementValue(prop, "ID") == "Qualification")
+                    ?.Elements().FirstOrDefault(v => string.Equals(v.Name.LocalName, "Value", StringComparison.OrdinalIgnoreCase))?.Value ?? "None";
+
+                var rfidTag = properties
+                    .FirstOrDefault(prop => GetElementValue(prop, "ID") == "RFID_Tag")
+                    ?.Elements().FirstOrDefault(v => string.Equals(v.Name.LocalName, "Value", StringComparison.OrdinalIgnoreCase))?.Value;
+
+                var existingPerson = await _context.PersonnelMasters
+                                                   .FirstOrDefaultAsync(emp => emp.EmployeeId == employeeId);
+
+                if (existingPerson == null)
+                {
+                    var newPerson = new PersonnelMaster
+                    {
+                        EmployeeId = employeeId,
+                        Name = name,
+                        PersonnelClassName = personnelClassName,
+                        Qualification = qualification,
+                        RfidTag = rfidTag,
+                        IsActive = true
+                    };
+
+                    await _context.PersonnelMasters.AddAsync(newPerson);
+                    _logger.LogInformation("[SAP Sync] Added NEW Person: {Id} - {Name}", employeeId, name);
+                }
+                else
+                {
+                    existingPerson.Name = name;
+                    existingPerson.PersonnelClassName = personnelClassName;
+                    existingPerson.Qualification = qualification;
+                    existingPerson.RfidTag = rfidTag;
+                    existingPerson.IsActive = true;
+
+                    _logger.LogInformation("[SAP Sync] Updated Person: {Id} - {Name}", employeeId, name);
+                }
+            }
+
+            var rowsSaved = await _context.SaveChangesAsync();
+            _logger.LogInformation("[SAP Sync] Successfully saved/updated Personnel. Saved rows: {Count}", rowsSaved);
         }
 
         private string GetElementValue(XElement parentElement, string localName)

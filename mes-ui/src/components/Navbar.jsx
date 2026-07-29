@@ -38,7 +38,7 @@ const MODULES = [
       { to: '/digitized-instructions', label: 'E-Work Instructions', icon: FiFileText },
     ],
   },
-  {
+ /*  {
     key: 'quality',
     label: 'Quality & Compliance',
     icon: FiShield,
@@ -72,7 +72,7 @@ const MODULES = [
       { to: '/downtime-analysis', label: 'Downtime Pareto', icon: FiBarChart2 },
       { to: '/scrap-reports', label: 'Scrap & Yield Analysis', icon: FiBox },
     ],
-  },
+  }, */
   {
     key: 'workforce',
     label: 'Workforce Management',
@@ -85,7 +85,7 @@ const MODULES = [
       { to: '/operator-performance-history', label: 'Performance History', icon: FiTrendingUp },
     ],
   },
-  {
+ /*  {
     key: 'inventory',
     label: 'Inventory & Flow',
     icon: FiPackage,
@@ -95,7 +95,7 @@ const MODULES = [
       { to: '/material-lot-tracking', label: 'Lot Tracking', icon: FiLayers },
       { to: '/raw-material-reception', label: 'Material Reception', icon: FiBox },
     ],
-  }, 
+  },  */
  
 ];
 
